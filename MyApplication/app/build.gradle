@@ -69,4 +69,7 @@ dependencies {
 
     //map travel
     compile(name: 'directions', ext: 'aar')
+
+    //permissions
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.5.2@aar'
 }

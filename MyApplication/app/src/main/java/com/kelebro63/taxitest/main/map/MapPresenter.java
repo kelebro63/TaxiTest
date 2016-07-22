@@ -8,21 +8,21 @@ import javax.inject.Inject;
 import rx.Observable;
 
 
-public class OrderMapPresenter extends BasePresenter<IOrderMapView> {
+public class MapPresenter extends BasePresenter<IMapView> {
 
-   // private final ILocationUtil locationUtil;
+    // private final ILocationUtil locationUtil;
     private LocationSettingsResult lastResult;
 
     @Inject
-    public OrderMapPresenter(Observable.Transformer transformer) {
-            //, ILocationUtil locationUtil) {
+    public MapPresenter(Observable.Transformer transformer) {
+        //, ILocationUtil locationUtil) {
         super(transformer);
-       // this.locationUtil = locationUtil;
+        // this.locationUtil = locationUtil;
     }
 
-//    public void setupMapInfo(@NonNull Order order) {
+    public void setupMapInfo() {
 //        List<Address> positions = new ArrayList<>();
-//        Address pointA = order.getPointA();
+//        Address pointA = Address.
 //        Address pointB = order.getPointB();
 //        LatLngBounds.Builder builder = new LatLngBounds.Builder();
 //        if (pointA != null) {
@@ -37,26 +37,9 @@ public class OrderMapPresenter extends BasePresenter<IOrderMapView> {
 //            builder = MapUtils.computeZoomForCenter(pointB.toLatLng(), 200);
 //        }
 //        final LatLngBounds.Builder finalBuilder = builder;
-//        subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
-//            lastResult = e;
-//            if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
-//                getView().setDisplayPermissionError(false);
-//                return locationUtil.requestLocation();
-//            }
-//            getView().setDisplayPermissionError(true);
-//            return Observable.just(null);
-//        }), new NetworkSubscriber<Location>(getView(), this) {
-//            @Override
-//            public void onNext(@Nullable Location location) {
-//                super.onNext(location);
-//                if (location != null) {
-//                    finalBuilder.include(new LatLng(location.getLatitude(), location.getLongitude()));
-//                }
-//                drawRoute(order, location);
-//                getView().displayMarkers(positions, finalBuilder.build());
-//            }
-//        });
-//    }
+//        getView().displayMarkers(positions, finalBuilder.build());
+
+    }
 
 //    private void drawRoute(@NonNull Order order, @Nullable Location currentLocation) {
 //        List<LatLng> wayPoints = new ArrayList<>();
@@ -76,6 +59,6 @@ public class OrderMapPresenter extends BasePresenter<IOrderMapView> {
 //    }
 
     public void resolvePermissionError() {
-      //  locationUtil.resolveError(((OrdersListFragment) getView()).getActivity(), lastResult);
+        //  locationUtil.resolveError(((OrdersListFragment) getView()).getActivity(), lastResult);
     }
 }

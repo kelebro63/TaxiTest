@@ -2,23 +2,27 @@ package com.kelebro63.taxitest.base;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.kelebro63.taxitest.R;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
 public abstract class BaseToolbarActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener {
-//    @Bind(R.id.toolbar)
-//    Toolbar toolbar;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         ButterKnife.bind(this);
-       // setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
-       // getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         enableHomeButtonIfNeeded();
     }

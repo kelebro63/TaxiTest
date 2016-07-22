@@ -34,14 +34,14 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 
-public class MapFragment extends BaseFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, IOrderMapView {
+public class MapFragment extends BaseFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, IMapView {
 
     @Bind(R.id.mapContainer)
     FrameLayout mapContainer;
     @Bind(R.id.permissionErrorView)
     View permissionErrorView;
     @Inject
-    OrderMapPresenter presenter;
+    MapPresenter presenter;
     private Map<Marker, Address> markers = new HashMap<>();
     private GoogleMap googleMap;
 
@@ -49,6 +49,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         MapFragment fragment = new MapFragment();
         return fragment;
     }
+
 
     @Override
     protected int getLayoutId() {
@@ -114,8 +115,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             return;
         }
         googleMap.setMyLocationEnabled(true);
-        googleMap.getUiSettings().setMapToolbarEnabled(false);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
         //presenter.setupMapInfo(getCurrentOrder());
     }
 

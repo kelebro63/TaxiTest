@@ -9,7 +9,7 @@ import com.kelebro63.taxitest.base.IView;
 import java.util.List;
 
 
-public interface IOrderMapView extends IView, RoutingListener {
+public interface IMapView extends IView, RoutingListener {
     void displayMarkers(List<Address> addresses, LatLngBounds bounds);
     void setDisplayPermissionError(boolean enabled);
 }
