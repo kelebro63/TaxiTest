@@ -20,6 +20,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
 
@@ -66,7 +67,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         super.onViewCreated(view, savedInstanceState);
         createFragmentComponent().inject(this);
         setHasOptionsMenu(true);
-        //presenter.setView(this);
+        presenter.setView(this);
         initMap();
     }
 
@@ -117,7 +118,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         googleMap.setMyLocationEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(true);
         googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        //presenter.setupMapInfo(getCurrentOrder());
+        presenter.setupMapInfo();
     }
 
     private void moveCameraToBounds(LatLngBounds bounds, GoogleMap googleMap) {
@@ -162,10 +163,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void displayMarkers(List<Address> addresses, LatLngBounds bounds) {
-//        for (Address address : addresses) {
-//            markers.put(googleMap.addMarker(new MarkerOptions().position(address.toLatLng())), address);
-//        }
-//        mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
+        for (Address address : addresses) {
+            markers.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude()))), address);
+        }
+        mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
     }
 
 
