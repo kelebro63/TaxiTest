@@ -6,10 +6,12 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.kelebro63.taxitest.base.BasePresenter;
+import com.kelebro63.taxitest.base.NetworkSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -50,7 +52,27 @@ public class MapPresenter extends BasePresenter<IMapView> {
 //        }
         final LatLngBounds.Builder finalBuilder = builder;
         getView().displayMarkers(positions, finalBuilder.build());
+        //getView().moveMarkers();
+        moveMarkers();
+    }
 
+    public void moveMarkers() {
+        subscribe(Observable.range(0, 100).delay(1, TimeUnit.SECONDS), getSubscriber());
+    }
+
+    private NetworkSubscriber<Integer> getSubscriber() {
+        return new NetworkSubscriber<Integer>(getView(), this) {
+            @Override
+            public void onNext(Integer o) {
+                super.onNext(o);
+                getView().moveMarkers();
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        };
     }
 
 //    private void drawRoute(@NonNull Order order, @Nullable Location currentLocation) {

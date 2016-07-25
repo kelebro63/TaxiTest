@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.directions.route.Route;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,6 +28,7 @@ import com.kelebro63.taxitest.base.BaseFragment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -116,20 +118,20 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             return;
         }
         googleMap.setMyLocationEnabled(true);
-        googleMap.getUiSettings().setMapToolbarEnabled(true);
-        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         presenter.setupMapInfo();
     }
 
     private void moveCameraToBounds(LatLngBounds bounds, GoogleMap googleMap) {
-//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, mapContainer.getMeasuredWidth(), mapContainer.getMeasuredHeight(),
-//                getResources().getDimensionPixelSize(R.dimen.orders_map_padding));
-//        googleMap.moveCamera(cameraUpdate);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, mapContainer.getMeasuredWidth(), mapContainer.getMeasuredHeight(),
+                getResources().getDimensionPixelSize(R.dimen.map_padding));
+        googleMap.moveCamera(cameraUpdate);
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-       // bottomPanel.show(markers.get(marker));
+
         return false;
     }
 
@@ -166,7 +168,24 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         for (Address address : addresses) {
             markers.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude()))), address);
         }
-        mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
+       // mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
+    }
+
+    @Override
+    public void moveMarkers() {
+        googleMap.clear();
+        Map<Marker, Address> newMarkers = new HashMap<>();
+        for (Map.Entry<Marker, Address> entry : markers.entrySet()) {
+            LatLng latLng = new LatLng(entry.getValue().getLatitude(), entry.getValue().getLongitude()+0.01);
+            Address address = new Address(Locale.ENGLISH);
+            address.setLongitude(latLng.longitude);
+            address.setLatitude(latLng.latitude);
+            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+            //markers.remove(marker);
+            newMarkers.put(marker, address);
+        }
+        markers.clear();
+        markers.putAll(newMarkers);
     }
 
 

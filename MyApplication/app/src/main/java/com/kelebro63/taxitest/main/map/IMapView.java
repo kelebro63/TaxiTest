@@ -11,5 +11,6 @@ import java.util.List;
 
 public interface IMapView extends IView, RoutingListener {
     void displayMarkers(List<Address> addresses, LatLngBounds bounds);
+    void moveMarkers();
     void setDisplayPermissionError(boolean enabled);
 }
