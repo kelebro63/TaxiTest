@@ -52,8 +52,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
 //        }
         final LatLngBounds.Builder finalBuilder = builder;
         getView().displayMarkers(positions, finalBuilder.build());
-        //getView().moveMarkers();
-        moveMarkers();
     }
 
     public void moveMarkers() {

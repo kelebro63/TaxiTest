@@ -77,16 +77,16 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.map_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.map_menu, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == R.id.location) {
-//            showMyLocation();
-//            return true;
-//        }
+        if (item.getItemId() == R.id.location) {
+            presenter.moveMarkers();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
