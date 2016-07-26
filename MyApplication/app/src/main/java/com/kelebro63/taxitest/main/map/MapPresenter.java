@@ -57,7 +57,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void moveMarkers() {
-        subscribe(Observable.range(0, 100).delay(1, TimeUnit.SECONDS), getSubscriber());
+        subscribe(Observable.range(0, 10000).delay(1, TimeUnit.SECONDS), getSubscriber());
     }
 
     private NetworkSubscriber<Integer> getSubscriber() {

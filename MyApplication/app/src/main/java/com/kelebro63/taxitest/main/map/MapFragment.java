@@ -87,8 +87,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 //            showMyLocation();
 //            return true;
 //        }
-//        return super.onOptionsItemSelected(item);
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     private void showMyLocation() {

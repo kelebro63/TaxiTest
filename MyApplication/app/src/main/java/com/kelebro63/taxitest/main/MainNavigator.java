@@ -25,7 +25,8 @@ public class MainNavigator {
 
 
     public void navigateToMap() {
-        fragmentManager.beginTransaction().replace(R.id.container, MapFragment.newInstance()).addToBackStack(null).commit();
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction().replace(R.id.container, MapFragment.newInstance()).commit();
     }
 
 
