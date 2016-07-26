@@ -167,7 +167,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         for (Address address : addresses) {
             markers.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude()))), address);
         }
-       // mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
+        mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
     }
 
     @Override

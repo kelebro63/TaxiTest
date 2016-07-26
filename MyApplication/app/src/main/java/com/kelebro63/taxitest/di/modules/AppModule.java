@@ -1,8 +1,13 @@
 package com.kelebro63.taxitest.di.modules;
 
 import com.kelebro63.taxitest.App;
+import com.kelebro63.taxitest.location.ILocationUtil;
+import com.kelebro63.taxitest.location.LocationUtil;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class AppModule {
@@ -19,13 +24,11 @@ public class AppModule {
 //    }
 //
 //
-//    @Singleton
-//    @Provides
-//    ILocationUtil provideLocationUtil() {
-//        if (BuildConfig.FLAVOR.equals("genymotion"))
-//            return new GenymotionLocationUtil();
-//        return new LocationUtil(app);
-//    }
+    @Singleton
+    @Provides
+    ILocationUtil provideLocationUtil() {
+        return new LocationUtil(app);
+    }
 
 
 }

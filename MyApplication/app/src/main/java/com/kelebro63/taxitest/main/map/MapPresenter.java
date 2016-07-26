@@ -1,12 +1,16 @@
 package com.kelebro63.taxitest.main.map;
 
 import android.location.Address;
+import android.location.Location;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
+import com.kelebro63.taxitest.location.ILocationUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +24,13 @@ import rx.Observable;
 
 public class MapPresenter extends BasePresenter<IMapView> {
 
-    // private final ILocationUtil locationUtil;
+    private final ILocationUtil locationUtil;
     private LocationSettingsResult lastResult;
 
     @Inject
-    public MapPresenter(Observable.Transformer transformer) {
-        //, ILocationUtil locationUtil) {
+    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil) {
         super(transformer);
-        // this.locationUtil = locationUtil;
+        this.locationUtil = locationUtil;
     }
 
     public void setupMapInfo() {
@@ -51,7 +54,26 @@ public class MapPresenter extends BasePresenter<IMapView> {
 //            builder = MapUtils.computeZoomForCenter(pointB.toLatLng(), 200);
 //        }
         final LatLngBounds.Builder finalBuilder = builder;
-        getView().displayMarkers(positions, finalBuilder.build());
+
+        subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
+            lastResult = e;
+            if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
+                getView().setDisplayPermissionError(false);
+                return locationUtil.requestLocation();
+            }
+            getView().setDisplayPermissionError(true);
+            return Observable.just(null);
+        }), new NetworkSubscriber<Location>(getView(), this) {
+            @Override
+            public void onNext(@Nullable Location location) {
+                super.onNext(location);
+                if (location != null) {
+                    finalBuilder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+                }
+               // drawRoute(order, location);
+                getView().displayMarkers(positions, finalBuilder.build());
+            }
+        });
     }
 
     public void moveMarkers() {

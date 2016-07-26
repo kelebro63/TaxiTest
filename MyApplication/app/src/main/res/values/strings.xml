@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">TaxiTest</string>
+
+    <string name="dialog_error">Ошибка</string>
+    <string name="dialogs.location_cannot_be_determined">Местоположение не определено</string>
+    <string name="dialogs_ok">ок</string>
+    <string name="dialogs_exit">выход</string>
 </resources>
