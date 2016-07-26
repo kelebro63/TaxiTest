@@ -3,6 +3,7 @@ package com.kelebro63.taxitest.main.map;
 import android.location.Address;
 import android.location.Location;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
@@ -13,6 +14,7 @@ import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +28,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
 
     private final ILocationUtil locationUtil;
     private LocationSettingsResult lastResult;
+    private static final String TAG = "Location";
 
     @Inject
     public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil) {
@@ -77,7 +80,17 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void moveMarkers() {
-        subscribe(Observable.range(0, 10000).delay(1, TimeUnit.SECONDS), getSubscriber());
+        //subscribe(Observable.range(0, 10).delay(3, TimeUnit.SECONDS), getSubscriber());
+        List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
+        subscribe(Observable
+                .interval(3, TimeUnit.SECONDS)
+                .map(i -> list.get(i.intValue()))
+                .take(list.size())
+                , getSubscriber());
+
+
+        //subscribe(Observable.interval(0, 10, TimeUnit.SECONDS).flatMap(Observable.from(list)).repeat(), getSubscriber());
+
     }
 
     private NetworkSubscriber<Integer> getSubscriber() {
@@ -85,6 +98,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
             @Override
             public void onNext(Integer o) {
                 super.onNext(o);
+                Log.d(TAG, "onNext = " + o);
                 getView().moveMarkers();
             }
 

@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
+import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
+import com.kelebro63.taxitest.main.map.animation.MarkerAnimation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +49,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     MapPresenter presenter;
     private Map<Marker, Address> markers = new HashMap<>();
     private GoogleMap googleMap;
+    private LatLngInterpolator mLatLngInterpolator;
 
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
@@ -172,20 +175,62 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void moveMarkers() {
-        googleMap.clear();
+        //googleMap.clear();
         Map<Marker, Address> newMarkers = new HashMap<>();
         for (Map.Entry<Marker, Address> entry : markers.entrySet()) {
-            LatLng latLng = new LatLng(entry.getValue().getLatitude(), entry.getValue().getLongitude()+0.01);
+            LatLng latLng = new LatLng(entry.getValue().getLatitude(), entry.getValue().getLongitude()+0.1);
             Address address = new Address(Locale.ENGLISH);
             address.setLongitude(latLng.longitude);
             address.setLatitude(latLng.latitude);
-            Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
-            //markers.remove(marker);
-            newMarkers.put(marker, address);
+            MarkerAnimation markerAnimation = new MarkerAnimation();
+            mLatLngInterpolator = new LatLngInterpolator.Linear();
+            markerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
+            //animateMarker(entry.getKey(), latLng, false);
+            //entry.getKey().setPosition(latLng);
+           // Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+
+            newMarkers.put(entry.getKey(), address);
         }
         markers.clear();
         markers.putAll(newMarkers);
     }
+
+//    public void animateMarker(final Marker marker, final LatLng toPosition,
+//                              final boolean hideMarker) {
+//        final Handler handler = new Handler();
+//        final long start = SystemClock.uptimeMillis();
+//        Projection proj = googleMap.getProjection();
+//        Point startPoint = proj.toScreenLocation(marker.getPosition());
+//        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+//        final long duration = 500;
+//
+//        final Interpolator interpolator = new LinearInterpolator();
+//
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                long elapsed = SystemClock.uptimeMillis() - start;
+//                float t = interpolator.getInterpolation((float) elapsed
+//                        / duration);
+//                double lng = t * toPosition.longitude + (1 - t)
+//                        * startLatLng.longitude;
+//                double lat = t * toPosition.latitude + (1 - t)
+//                        * startLatLng.latitude;
+//                marker.setPosition(new LatLng(lat, lng));
+//
+//                if (t < 1.0) {
+//                    // Post again 16ms later.
+//                    handler.postDelayed(this, 16);
+//                } else {
+//                    if (hideMarker) {
+//                        marker.setVisible(false);
+//                    } else {
+//                        marker.setVisible(true);
+//                    }
+//                }
+//            }
+//        });
+//    }
 
 
     @Override
