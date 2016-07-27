@@ -2,6 +2,7 @@ package com.kelebro63.taxitest.main.map;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
 import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
@@ -133,8 +135,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-
-        return false;
+        presenter.drawRoute(marker);
+        return true;
     }
 
     @Override
@@ -149,15 +151,15 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> routes, int shortestRouteIndex) {
-//        setInProgress(false);
-//        if (!isAdded() || routes.size() == 0)
-//            return;
-//        Route route = routes.get(shortestRouteIndex);
-//        PolylineOptions polyOptions = new PolylineOptions();
-//        polyOptions.color(Color.BLUE);
-//        polyOptions.width(getResources().getDimensionPixelSize(R.dimen.polyline_width));
-//        polyOptions.addAll(route.getPoints());
-//        googleMap.addPolyline(polyOptions);
+        setInProgress(false);
+        if (!isAdded() || routes.size() == 0)
+            return;
+        Route route = routes.get(shortestRouteIndex);
+        PolylineOptions polyOptions = new PolylineOptions();
+        polyOptions.color(Color.BLUE);
+        polyOptions.width(getResources().getDimensionPixelSize(R.dimen.polyline_width));
+        polyOptions.addAll(route.getPoints());
+        googleMap.addPolyline(polyOptions);
     }
 
     @Override
@@ -194,44 +196,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         markers.clear();
         markers.putAll(newMarkers);
     }
-
-//    public void animateMarker(final Marker marker, final LatLng toPosition,
-//                              final boolean hideMarker) {
-//        final Handler handler = new Handler();
-//        final long start = SystemClock.uptimeMillis();
-//        Projection proj = googleMap.getProjection();
-//        Point startPoint = proj.toScreenLocation(marker.getPosition());
-//        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-//        final long duration = 500;
-//
-//        final Interpolator interpolator = new LinearInterpolator();
-//
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                long elapsed = SystemClock.uptimeMillis() - start;
-//                float t = interpolator.getInterpolation((float) elapsed
-//                        / duration);
-//                double lng = t * toPosition.longitude + (1 - t)
-//                        * startLatLng.longitude;
-//                double lat = t * toPosition.latitude + (1 - t)
-//                        * startLatLng.latitude;
-//                marker.setPosition(new LatLng(lat, lng));
-//
-//                if (t < 1.0) {
-//                    // Post again 16ms later.
-//                    handler.postDelayed(this, 16);
-//                } else {
-//                    if (hideMarker) {
-//                        marker.setVisible(false);
-//                    } else {
-//                        marker.setVisible(true);
-//                    }
-//                }
-//            }
-//        });
-//    }
-
 
     @Override
     public void setDisplayPermissionError(boolean enabled) {

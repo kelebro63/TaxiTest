@@ -5,10 +5,12 @@ import android.location.Location;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.directions.route.Routing;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
@@ -73,7 +75,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
                 if (location != null) {
                     finalBuilder.include(new LatLng(location.getLatitude(), location.getLongitude()));
                 }
-               // drawRoute(order, location);
                 getView().displayMarkers(positions, finalBuilder.build());
             }
         });
@@ -106,24 +107,36 @@ public class MapPresenter extends BasePresenter<IMapView> {
         };
     }
 
-//    private void drawRoute(@NonNull Order order, @Nullable Location currentLocation) {
-//        List<LatLng> wayPoints = new ArrayList<>();
-//        if (currentLocation != null) {
-//            wayPoints.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-//        }
-//        if (order.getPointA() != null) {
-//            wayPoints.add(order.getPointA().toLatLng());
-//        }
-//        if (order.getPointB() != null) {
-//            wayPoints.add(order.getPointB().toLatLng());
-//        }
-//        if (wayPoints.size() < 2)
-//            return;
-//        Routing routing = new Routing.Builder().waypoints(wayPoints).withListener(getView()).build();
-//        routing.execute();
-//    }
-
     public void resolvePermissionError() {
         //  locationUtil.resolveError(((OrdersListFragment) getView()).getActivity(), lastResult);
+    }
+
+    public void drawRoute(Marker marker) {
+        Log.d(TAG, "subscribe");
+        subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
+            lastResult = e;
+            if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
+                getView().setDisplayPermissionError(false);
+                return locationUtil.requestLocation();
+            }
+            getView().setDisplayPermissionError(true);
+            return Observable.just(null);
+        }), new NetworkSubscriber<Location>(getView(), this) {
+            @Override
+            public void onNext(@Nullable Location location) {
+                super.onNext(location);
+                List<LatLng> wayPoints = new ArrayList<>();
+
+                if (location != null) {
+                    wayPoints.add(new LatLng(location.getLatitude(), location.getLongitude()));
+                }
+
+                wayPoints.add(marker.getPosition());
+                if (wayPoints.size() < 2)
+                    return;
+                Routing routing = new Routing.Builder().waypoints(wayPoints).withListener(getView()).build();
+                routing.execute();
+            }
+        });
     }
 }

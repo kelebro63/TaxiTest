@@ -6,4 +6,5 @@
 
     <!-- Map -->
     <dimen name="map_padding">96dp</dimen>
+    <dimen name="polyline.width">1.5dp</dimen>
 </resources>
