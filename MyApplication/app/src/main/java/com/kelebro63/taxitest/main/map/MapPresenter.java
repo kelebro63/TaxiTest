@@ -80,16 +80,13 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void moveMarkers() {
-        //subscribe(Observable.range(0, 10).delay(3, TimeUnit.SECONDS), getSubscriber());
         List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
         subscribe(Observable
-                .interval(3, TimeUnit.SECONDS)
+                .interval(1, TimeUnit.SECONDS)
                 .map(i -> list.get(i.intValue()))
                 .take(list.size())
                 , getSubscriber());
 
-
-        //subscribe(Observable.interval(0, 10, TimeUnit.SECONDS).flatMap(Observable.from(list)).repeat(), getSubscriber());
 
     }
 
