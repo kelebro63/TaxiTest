@@ -108,7 +108,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void resolvePermissionError() {
-        //  locationUtil.resolveError(((OrdersListFragment) getView()).getActivity(), lastResult);
+          locationUtil.resolveError(((com.google.android.gms.maps.MapFragment) getView()).getActivity(), lastResult);
     }
 
     public void drawRoute(Marker marker) {

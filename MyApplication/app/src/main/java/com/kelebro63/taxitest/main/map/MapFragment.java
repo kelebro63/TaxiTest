@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
@@ -52,6 +53,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     private Map<Marker, Address> markers = new HashMap<>();
     private GoogleMap googleMap;
     private LatLngInterpolator mLatLngInterpolator;
+    List<Polyline> polylines = new ArrayList<Polyline>();
 
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
@@ -66,7 +68,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     protected String getTitle() {
-        return "map";//getString(R.string.orders_delivery_address);
+        return "map";//getString(R.string.map);
     }
 
     @Override
@@ -135,6 +137,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        for(Polyline line : polylines) {
+            line.remove();
+        }
+        polylines.clear();
         presenter.drawRoute(marker);
         return true;
     }
@@ -159,7 +165,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         polyOptions.color(Color.BLUE);
         polyOptions.width(getResources().getDimensionPixelSize(R.dimen.polyline_width));
         polyOptions.addAll(route.getPoints());
-        googleMap.addPolyline(polyOptions);
+        Polyline polyline = googleMap.addPolyline(polyOptions);
+        polylines.add(polyline);
     }
 
     @Override
@@ -205,23 +212,5 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @OnClick(R.id.resolvePermissionError)
     void resolvePermissionError() {
         presenter.resolvePermissionError();
-    }
-
-    private Location getMyLocation() { //FIX ME to LocationServices.FusedLocationApi.getLastLocation
-//        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return null;
-//        }
-//        Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-//        if (myLocation == null) {
-//            Criteria criteria = new Criteria();
-//            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-//            String provider = lm.getBestProvider(criteria, true);
-//            myLocation = lm.getLastKnownLocation(provider);
-//        }
-//
-//        return myLocation;
-        return null;
     }
 }
