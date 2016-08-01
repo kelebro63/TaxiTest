@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.IView;
+import com.kelebro63.taxitest.main.map.MapFragment;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import javax.inject.Inject;
@@ -31,6 +32,9 @@ public class MainPresenter extends BasePresenter<IView> {
     }
 
     public void determineScreenToShow() {
+        if (navigator.getVisibleFragment() != null && navigator.getVisibleFragment() instanceof MapFragment) {
+            return;
+        }
         this.navigator.navigateToMap();
     }
 
