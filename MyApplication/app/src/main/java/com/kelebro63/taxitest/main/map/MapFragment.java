@@ -91,6 +91,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.location) {
+            cleanPolylinesOnMap();
             presenter.moveMarkers();
             return true;
         }
@@ -137,12 +138,16 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        cleanPolylinesOnMap();
+        presenter.drawRoute(marker);
+        return true;
+    }
+
+    private void cleanPolylinesOnMap() {
         for(Polyline line : polylines) {
             line.remove();
         }
         polylines.clear();
-        presenter.drawRoute(marker);
-        return true;
     }
 
     @Override
