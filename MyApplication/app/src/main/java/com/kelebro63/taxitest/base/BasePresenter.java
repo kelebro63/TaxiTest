@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import rx.Observable;
 import rx.Scheduler;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -32,6 +33,11 @@ public abstract class BasePresenter<T extends IView> {
 
     protected <S> void subscribe(Observable<S> original, NetworkSubscriber<S> subscriber) {
         original.compose(transformer).subscribeOn(getBackgroundThreadScheduler()).observeOn(getMainThreadScheduler()).subscribe(subscriber);
+    }
+
+    protected <S> Subscription subscribeWithResult(Observable<S> original, NetworkSubscriber<S> subscriber) {
+        Subscription subscription = original.compose(transformer).subscribeOn(getBackgroundThreadScheduler()).observeOn(getMainThreadScheduler()).subscribe(subscriber);
+        return subscription;
     }
 
     public boolean isInitialized() {

@@ -24,12 +24,16 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
 
 
 public class MapPresenter extends BasePresenter<IMapView> {
 
-    private final ILocationUtil locationUtil;
     private LocationSettingsResult lastResult;
+    private Subscription subscription;
+
+    private final ILocationUtil locationUtil;
+
     private static final String TAG = "Location";
 
     @Inject
@@ -81,11 +85,14 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void moveMarkers() {
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
         List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
-        subscribe(Observable
-                .interval(1, TimeUnit.SECONDS)
-                .map(i -> list.get(i.intValue()))
-                .take(list.size())
+        subscription = subscribeWithResult(Observable
+                        .interval(1, TimeUnit.SECONDS)
+                        .map(i -> list.get(i.intValue()))
+                        .take(list.size())
                 , getSubscriber());
 
 
@@ -103,6 +110,11 @@ public class MapPresenter extends BasePresenter<IMapView> {
             @Override
             public void onError(Throwable throwable) {
 
+            }
+
+            @Override
+            public void onCompleted() {
+                super.onCompleted();
             }
         };
     }
