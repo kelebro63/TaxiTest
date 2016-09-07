@@ -88,9 +88,5 @@ public abstract class BaseFragment extends RxFragment implements IView {
         return null;
     }
 
-    @Override
-    public String provideProgressTitle() {
-        return "";//getString(R.string.dialogs_please_wait);
-    }
 
 }

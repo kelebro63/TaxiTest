@@ -6,8 +6,8 @@ import rx.Subscriber;
 
 
 public class NetworkSubscriber<T> extends Subscriber<T> {
-    private static final String TAG = "NetworkSubscriber";
     protected final IView view;
+
     @Nullable
     protected final BasePresenter presenter;
 

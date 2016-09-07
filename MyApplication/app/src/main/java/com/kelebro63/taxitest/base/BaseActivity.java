@@ -1,7 +1,6 @@
 package com.kelebro63.taxitest.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.StringRes;
 import android.view.inputmethod.InputMethodManager;
@@ -50,16 +49,6 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IView,
     @Override
     public void onCancel(DialogInterface dialog) {
         onBackPressed();
-    }
-
-    @Override
-    public String provideProgressTitle() {
-        return "";//getString(R.string.dialogs_please_wait);
-    }
-
-    @Override
-    public Context getContext() {
-        return this;
     }
 
     @Override

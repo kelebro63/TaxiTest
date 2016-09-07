@@ -12,12 +12,4 @@ import dagger.Component;
 public interface AppComponent {
 
     ILocationUtil locationUtil();
-//
-//    DistanceCounter distanceCounter();
-
-//    void inject(GcmService service);
-//
-//    void inject(InstanceIDListenerService service);
-//
-//    void inject(OrderNormalViewHolder orderNormalViewHolder);
 }

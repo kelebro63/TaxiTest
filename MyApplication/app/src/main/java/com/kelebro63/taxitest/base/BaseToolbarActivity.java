@@ -21,15 +21,19 @@ public abstract class BaseToolbarActivity extends BaseActivity implements Fragme
         setContentView(getLayoutId());
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_ab_back);
+        }
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         enableHomeButtonIfNeeded();
     }
 
     private void enableHomeButtonIfNeeded() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
@@ -53,10 +57,12 @@ public abstract class BaseToolbarActivity extends BaseActivity implements Fragme
     @Override
     public void onBackStackChanged() {
         int count = getSupportFragmentManager().getBackStackEntryCount();
-        if (count > 0) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } else {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        if (getSupportActionBar() != null) {
+            if (count > 0) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            } else {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
         }
     }
 }
