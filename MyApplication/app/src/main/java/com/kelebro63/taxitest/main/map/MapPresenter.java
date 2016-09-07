@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
@@ -31,15 +32,17 @@ public class MapPresenter extends BasePresenter<IMapView> {
 
     private LocationSettingsResult lastResult;
     private Subscription subscription;
+    private BaseActivity activity;
 
     private final ILocationUtil locationUtil;
 
     private static final String TAG = "Location";
 
     @Inject
-    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil) {
+    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity) {
         super(transformer);
         this.locationUtil = locationUtil;
+        this.activity = activity;
     }
 
     public void setupMapInfo() {
@@ -68,7 +71,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
             lastResult = e;
             if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
                 getView().setDisplayPermissionError(false);
-                return locationUtil.requestLocation();
+                return locationUtil.requestLocation(activity);
             }
             getView().setDisplayPermissionError(true);
             return Observable.just(null);
@@ -129,7 +132,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
             lastResult = e;
             if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
                 getView().setDisplayPermissionError(false);
-                return locationUtil.requestLocation();
+                return locationUtil.requestLocation(activity);
             }
             getView().setDisplayPermissionError(true);
             return Observable.just(null);

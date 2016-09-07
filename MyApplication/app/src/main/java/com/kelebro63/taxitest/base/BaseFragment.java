@@ -1,6 +1,7 @@
 package com.kelebro63.taxitest.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
@@ -87,6 +88,8 @@ public abstract class BaseFragment extends RxFragment implements IView {
     protected String getSubtitle() {
         return null;
     }
+
+    public abstract void onPermissionResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults);
 
 
 }

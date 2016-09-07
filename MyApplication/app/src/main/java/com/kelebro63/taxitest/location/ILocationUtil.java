@@ -5,11 +5,12 @@ import android.location.Location;
 
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationSettingsResult;
+import com.kelebro63.taxitest.base.BaseActivity;
 
 import rx.Observable;
 
 public interface ILocationUtil extends LocationListener {
-    Observable<Location> requestLocation();
+    Observable<Location> requestLocation(BaseActivity activity);
 
     Observable<LocationSettingsResult> isRequiredPermissionsEnabled();
 

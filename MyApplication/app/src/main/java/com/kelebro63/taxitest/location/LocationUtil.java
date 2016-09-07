@@ -1,16 +1,17 @@
 package com.kelebro63.taxitest.location;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -19,6 +20,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.kelebro63.taxitest.App;
 import com.kelebro63.taxitest.R;
+import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.error_handler.GoogleApiException;
 
 import java.util.concurrent.TimeUnit;
@@ -41,15 +43,23 @@ public final class LocationUtil implements ILocationUtil {
         locationSettingsRequest = new LocationSettingsRequest.Builder().setAlwaysShow(true).addLocationRequest(locationRequest).build();
     }
 
-    public Observable<Location> requestLocation() {
-        return connectToApi().flatMap(e -> requestLocationInternal());
+    public Observable<Location> requestLocation(BaseActivity activity) {
+        return connectToApi().flatMap(e -> requestLocationInternal(activity));
     }
 
-    private Observable<Location> requestLocationInternal() {
+    private Observable<Location> requestLocationInternal(BaseActivity activity) {
         return Observable.defer(() -> Observable.range(0, Integer.MAX_VALUE)).delay(1, TimeUnit.SECONDS)
                 .concatMap(e -> {
-                    LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this, Looper.getMainLooper());
-                    return Observable.just(LocationServices.FusedLocationApi.getLastLocation(client));
+                    if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Check Permissions Now
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                REQUEST_LOCATION);
+                        return null;
+                    } else {
+                        LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this, Looper.getMainLooper());
+                        return Observable.just(LocationServices.FusedLocationApi.getLastLocation(client));
+                    }
                 }).takeFirst(e -> e != null).switchIfEmpty(Observable.error(new IllegalStateException(context.getString(R.string.dialogs_location_cannot_be_determined))));
     }
 
@@ -61,18 +71,12 @@ public final class LocationUtil implements ILocationUtil {
     @Override
     public void resolveError(Context context, LocationSettingsResult result) {
         switch (result.getStatus().getStatusCode()) {
-
-            case LocationSettingsStatusCodes.SERVICE_DISABLED:
-                Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog((Activity) context, LocationSettingsStatusCodes.SERVICE_DISABLED, 0);
-                dialog.setCancelable(false);
-                dialog.show();
-                break;
-
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
             case LocationSettingsStatusCodes.SIGN_IN_REQUIRED:
                 try {
                     result.getStatus().startResolutionForResult((Activity) context, REQUEST_LOCATION);
                 } catch (IntentSender.SendIntentException e) {
+                    e.printStackTrace();
                 }
                 break;
             default:

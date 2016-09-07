@@ -2,6 +2,7 @@ package com.kelebro63.taxitest.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseToolbarActivity;
@@ -28,7 +29,7 @@ public class MainActivity  extends BaseToolbarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.getPermission();
+        getPermission();
     }
 
     @Override
@@ -45,4 +46,18 @@ public class MainActivity  extends BaseToolbarActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    public void getPermission() {
+        presenter.getPermission();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LocationUtil.REQUEST_LOCATION:
+                presenter.sendPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
 }

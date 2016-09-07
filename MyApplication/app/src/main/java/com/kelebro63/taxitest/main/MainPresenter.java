@@ -2,6 +2,7 @@ package com.kelebro63.taxitest.main;
 
 import android.Manifest;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -41,6 +42,10 @@ public class MainPresenter extends BasePresenter<IView> {
 
     public void sendResult(int requestCode, int resultCode, Intent data) {
         this.navigator.sendResultToFragment(requestCode, resultCode, data);
+    }
+
+    public void sendPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        this.navigator.sendPermissionsResultToFragment(requestCode, permissions, grantResults);
     }
 
     public void getPermission() {

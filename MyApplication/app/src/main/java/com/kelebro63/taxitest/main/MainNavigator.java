@@ -1,11 +1,13 @@
 package com.kelebro63.taxitest.main;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseActivity;
+import com.kelebro63.taxitest.base.BaseFragment;
 import com.kelebro63.taxitest.main.map.MapFragment;
 
 import java.util.List;
@@ -32,6 +34,10 @@ public class MainNavigator {
 
     public void sendResultToFragment(int requestCode, int resultCode, Intent data) {
         getVisibleFragment().onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void sendPermissionsResultToFragment(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        ((BaseFragment) getVisibleFragment()).onPermissionResult(requestCode, permissions, grantResults);
     }
 
 
