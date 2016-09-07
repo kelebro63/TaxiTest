@@ -15,14 +15,11 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 
 public class MainPresenter extends BasePresenter<IView> {
 
     private final MainNavigator navigator;
-    private RxPermissions mRxPermissions;
     private static final String TAG = "RxPermissions";
-    private Observable<Object> observable;
     private final BaseActivity activity;
 
 
@@ -49,15 +46,14 @@ public class MainPresenter extends BasePresenter<IView> {
     }
 
     public void getPermission() {
-        mRxPermissions = RxPermissions.getInstance(activity);
+        RxPermissions mRxPermissions = RxPermissions.getInstance(activity);
         mRxPermissions.setLogging(true);
-        observable = createObserver();
+        Observable<Object> observable = createObserver();
         mRxPermissions
                 .request(observable, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .subscribe(granted -> {
                             Log.i(TAG, "Received result " + granted);
-                            if (granted) {
-                            } else {
+                            if (!granted) {
                                 Toast.makeText(activity,
                                         "Permission denied, can't enable the location",
                                         Toast.LENGTH_SHORT).show();
@@ -69,12 +65,7 @@ public class MainPresenter extends BasePresenter<IView> {
     }
 
     public Observable<Object> createObserver() {
-        return Observable.create(new Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> observer) {
-                observer.onNext(new Object());
-            }
-        } );
+        return Observable.create(observer -> observer.onNext(new Object()));
     }
 
 }

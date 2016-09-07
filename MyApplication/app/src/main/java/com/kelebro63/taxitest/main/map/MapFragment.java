@@ -57,12 +57,10 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     MapPresenter presenter;
     private Map<Marker, Address> markers = new HashMap<>();
     private GoogleMap googleMap;
-    private LatLngInterpolator mLatLngInterpolator;
-    List<Polyline> polylines = new ArrayList<Polyline>();
+    List<Polyline> polylines = new ArrayList<>();
 
     public static MapFragment newInstance() {
-        MapFragment fragment = new MapFragment();
-        return fragment;
+        return new MapFragment();
     }
 
 
@@ -207,13 +205,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             Address address = new Address(Locale.ENGLISH);
             address.setLongitude(latLng.longitude);
             address.setLatitude(latLng.latitude);
-            MarkerAnimation markerAnimation = new MarkerAnimation();
-            mLatLngInterpolator = new LatLngInterpolator.Linear();
-            markerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
-            //animateMarker(entry.getKey(), latLng, false);
-            //entry.getKey().setPosition(latLng);
-            // Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
-
+            LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
+            MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
             newMarkers.put(entry.getKey(), address);
         }
         markers.clear();

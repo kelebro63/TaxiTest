@@ -53,7 +53,7 @@ public class MainNavigator {
         return null;
     }
 
-    public void goBack() {
-        fragmentManager.popBackStackImmediate();
-    }
+//    public void goBack() {
+//        fragmentManager.popBackStackImmediate();
+//    }
 }

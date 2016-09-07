@@ -54,14 +54,11 @@ public class MapPresenter extends BasePresenter<IMapView> {
         pointB.setLatitude(56.88548);
         pointB.setLongitude(38.605);
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        if (pointA != null) {
-            new LatLng(pointA.getLatitude(), pointA.getLongitude());
-            positions.add(pointA);
-        }
-        if (pointB != null) {
-            builder.include(new LatLng(pointB.getLatitude(), pointB.getLongitude()));
-            positions.add(pointB);
-        }
+        new LatLng(pointA.getLatitude(), pointA.getLongitude());
+        positions.add(pointA);
+        builder.include(new LatLng(pointB.getLatitude(), pointB.getLongitude()));
+        positions.add(pointB);
+
 //        if (pointA == null && pointB != null) {
 //            builder = MapUtils.computeZoomForCenter(pointB.toLatLng(), 200);
 //        }
