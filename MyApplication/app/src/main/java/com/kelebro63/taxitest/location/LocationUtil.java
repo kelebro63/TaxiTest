@@ -31,6 +31,8 @@ public final class LocationUtil implements ILocationUtil {
     private LocationRequest locationRequest;
     private LocationSettingsRequest locationSettingsRequest;
 
+    public final static int REQUEST_LOCATION = 199;
+
     public LocationUtil(App context) {
         this.context = context;
         client = new GoogleApiClient.Builder(context).addApi(LocationServices.API).build();
@@ -69,7 +71,7 @@ public final class LocationUtil implements ILocationUtil {
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
             case LocationSettingsStatusCodes.SIGN_IN_REQUIRED:
                 try {
-                    result.getStatus().startResolutionForResult((Activity) context, 0);
+                    result.getStatus().startResolutionForResult((Activity) context, REQUEST_LOCATION);
                 } catch (IntentSender.SendIntentException e) {
                 }
                 break;

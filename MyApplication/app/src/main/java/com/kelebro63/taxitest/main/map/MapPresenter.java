@@ -46,7 +46,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
         List<Address> positions = new ArrayList<>();
         Address pointA = new Address(Locale.ENGLISH);
         pointA.setLatitude(55.88548);
-        pointA.setLongitude(37.605);
+        pointA.setLongitude(33.605);
         Address pointB =  new Address(Locale.ENGLISH);
         pointB.setLatitude(56.88548);
         pointB.setLongitude(38.605);
@@ -120,7 +120,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void resolvePermissionError() {
-          locationUtil.resolveError(((com.google.android.gms.maps.MapFragment) getView()).getActivity(), lastResult);
+          locationUtil.resolveError(((MapFragment) getView()).getActivity(), lastResult);
     }
 
     public void drawRoute(Marker marker) {

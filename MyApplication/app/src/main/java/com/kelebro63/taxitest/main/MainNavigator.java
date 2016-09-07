@@ -1,5 +1,6 @@
 package com.kelebro63.taxitest.main;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -27,6 +28,10 @@ public class MainNavigator {
     public void navigateToMap() {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction().replace(R.id.container, MapFragment.newInstance()).commit();
+    }
+
+    public void sendResultToFragment(int requestCode, int resultCode, Intent data) {
+        getVisibleFragment().onActivityResult(requestCode, resultCode, data);
     }
 
 

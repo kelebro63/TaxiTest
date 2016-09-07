@@ -1,6 +1,7 @@
 package com.kelebro63.taxitest.main.map;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
+import com.kelebro63.taxitest.location.LocationUtil;
 import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
 import com.kelebro63.taxitest.main.map.animation.MarkerAnimation;
 
@@ -136,6 +138,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             return;
         }
         googleMap.setMyLocationEnabled(true);
+
+
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         presenter.setupMapInfo();
@@ -212,7 +216,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             markerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
             //animateMarker(entry.getKey(), latLng, false);
             //entry.getKey().setPosition(latLng);
-           // Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+            // Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng));
 
             newMarkers.put(entry.getKey(), address);
         }
@@ -228,5 +232,15 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @OnClick(R.id.resolvePermissionError)
     void resolvePermissionError() {
         presenter.resolvePermissionError();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LocationUtil.REQUEST_LOCATION) {
+            if (resultCode == -1) {
+                presenter.setupMapInfo();
+            }
+        }
     }
 }
