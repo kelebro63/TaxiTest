@@ -199,18 +199,15 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void moveMarkers() {
         //googleMap.clear();
-        Map<Marker, Address> newMarkers = new HashMap<>();
         for (Map.Entry<Marker, Address> entry : markers.entrySet()) {
             LatLng latLng = new LatLng(entry.getValue().getLatitude(), entry.getValue().getLongitude()+0.1);
             Address address = new Address(Locale.ENGLISH);
             address.setLongitude(latLng.longitude);
             address.setLatitude(latLng.latitude);
+            entry.setValue(address);
             LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
             MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
-            newMarkers.put(entry.getKey(), address);
         }
-        markers.clear();
-        markers.putAll(newMarkers);
     }
 
     @Override
