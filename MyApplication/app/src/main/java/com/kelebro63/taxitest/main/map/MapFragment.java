@@ -142,13 +142,13 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, mapContainer.getMeasuredWidth(), mapContainer.getMeasuredHeight(),
                 getResources().getDimensionPixelSize(R.dimen.map_padding));
         googleMap.moveCamera(cameraUpdate);
-        //LatLngBounds b = googleMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        cleanPolylinesOnMap();
-        presenter.drawRoute(marker);
+//        cleanPolylinesOnMap();
+//        presenter.drawRoute(marker);
+        marker.showInfoWindow();
         return true;
     }
 
@@ -193,7 +193,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
         ArrayList<LatLng> latLngs = presenter.generateMarkers(bounds);//googleMap.getProjection().getVisibleRegion().latLngBounds
         for (LatLng latLng : latLngs) {
-            markers.put(googleMap.addMarker(new MarkerOptions().position(latLng)), latLng);
+            markers.put(googleMap.addMarker(new MarkerOptions().position(latLng).title("test")), latLng);
         }
     }
 
@@ -205,7 +205,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             entry.setValue(latLng);
             LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
             MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
-
         }
     }
 
