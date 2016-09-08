@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -55,7 +54,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     View permissionErrorView;
     @Inject
     MapPresenter presenter;
-    private Map<Marker, Address> markers = new HashMap<>();
+    private Map<Marker, LatLng> markers = new HashMap<>();
     private GoogleMap googleMap;
     List<Polyline> polylines = new ArrayList<>();
 
@@ -143,6 +142,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, mapContainer.getMeasuredWidth(), mapContainer.getMeasuredHeight(),
                 getResources().getDimensionPixelSize(R.dimen.map_padding));
         googleMap.moveCamera(cameraUpdate);
+        //LatLngBounds b = googleMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
     @Override
@@ -190,23 +190,22 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void displayMarkers(List<Address> addresses, LatLngBounds bounds) {
-        for (Address address : addresses) {
-            markers.put(googleMap.addMarker(new MarkerOptions().position(new LatLng(address.getLatitude(), address.getLongitude()))), address);
-        }
         mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
+        ArrayList<LatLng> latLngs = presenter.generateMarkers(bounds);//googleMap.getProjection().getVisibleRegion().latLngBounds
+        for (LatLng latLng : latLngs) {
+            markers.put(googleMap.addMarker(new MarkerOptions().position(latLng)), latLng);
+        }
     }
 
     @Override
     public void moveMarkers() {
-        //googleMap.clear();
-        for (Map.Entry<Marker, Address> entry : markers.entrySet()) {
-            LatLng latLng = new LatLng(entry.getValue().getLatitude(), entry.getValue().getLongitude()+0.1);
-            Address address = new Address(Locale.ENGLISH);
-            address.setLongitude(latLng.longitude);
-            address.setLatitude(latLng.latitude);
-            entry.setValue(address);
+       // googleMap.clear();
+        for (Map.Entry<Marker, LatLng> entry : markers.entrySet()) {
+            LatLng latLng = new LatLng(entry.getValue().latitude, entry.getValue().longitude + 0.1);
+            entry.setValue(latLng);
             LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
             MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
+
         }
     }
 

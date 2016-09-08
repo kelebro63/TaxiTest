@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.SphericalUtil;
 import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -37,6 +39,8 @@ public class MapPresenter extends BasePresenter<IMapView> {
     private final ILocationUtil locationUtil;
 
     private static final String TAG = "Location";
+    public static final double AREA_ZOOM_RADIUS = 10000; //in meters
+    public static final int COUNT_MARKERS = 10;
 
     @Inject
     public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity) {
@@ -62,7 +66,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
 //        if (pointA == null && pointB != null) {
 //            builder = MapUtils.computeZoomForCenter(pointB.toLatLng(), 200);
 //        }
-        final LatLngBounds.Builder finalBuilder = builder;
+       // final LatLngBounds.Builder finalBuilder = builder;
 
         subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
             lastResult = e;
@@ -76,12 +80,19 @@ public class MapPresenter extends BasePresenter<IMapView> {
             @Override
             public void onNext(@Nullable Location location) {
                 super.onNext(location);
-                if (location != null) {
-                    finalBuilder.include(new LatLng(location.getLatitude(), location.getLongitude()));
-                }
-                getView().displayMarkers(positions, finalBuilder.build());
+//                if (location != null) {
+//                    finalBuilder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+//                }
+               //getView().displayMarkers(positions, finalBuilder.build());
+                getView().displayMarkers(positions, toBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS)); //finalBuilder.build();
             }
         });
+    }
+
+    private LatLngBounds toBounds(LatLng center, double radius) {
+        LatLng southwest = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 225);
+        LatLng northeast = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 45);
+        return new LatLngBounds(southwest, northeast);
     }
 
     public void moveMarkers() {
@@ -94,8 +105,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
                         .map(i -> list.get(i.intValue()))
                         .take(list.size())
                 , getSubscriber());
-
-
     }
 
     private NetworkSubscriber<Integer> getSubscriber() {
@@ -120,7 +129,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void resolvePermissionError() {
-          locationUtil.resolveError(((MapFragment) getView()).getActivity(), lastResult);
+        locationUtil.resolveError(((MapFragment) getView()).getActivity(), lastResult);
     }
 
     public void drawRoute(Marker marker) {
@@ -150,5 +159,16 @@ public class MapPresenter extends BasePresenter<IMapView> {
                 routing.execute();
             }
         });
+    }
+
+    public ArrayList<LatLng> generateMarkers(LatLngBounds bounds) {
+        ArrayList<LatLng> latLngs = new ArrayList<>();
+        Random r = new Random();
+        for (int i = 0; i < COUNT_MARKERS; i++) {
+            double lat = bounds.southwest.latitude + (bounds.northeast.latitude - bounds.southwest.latitude) * r.nextDouble();
+            double lon = bounds.southwest.longitude + (bounds.northeast.longitude - bounds.southwest.longitude) * r.nextDouble();
+            latLngs.add(new LatLng(lat, lon));
+        }
+        return latLngs;
     }
 }
