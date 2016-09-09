@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -33,6 +32,7 @@ import com.kelebro63.taxitest.location.LocationUtil;
 import com.kelebro63.taxitest.main.MainActivity;
 import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
 import com.kelebro63.taxitest.main.map.animation.MarkerAnimation;
+import com.kelebro63.taxitest.models.Car;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,16 +189,15 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     @Override
-    public void displayMarkers(List<Address> addresses, LatLngBounds bounds) {
+    public void displayCars(List<Car> cars, LatLngBounds bounds) {
         mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
-        ArrayList<LatLng> latLngs = presenter.generateMarkers(bounds);//googleMap.getProjection().getVisibleRegion().latLngBounds
-        for (LatLng latLng : latLngs) {
-            markers.put(googleMap.addMarker(new MarkerOptions().position(latLng).title("test")), latLng);
+        for (Car car : cars) {
+            markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car.getLatLng());
         }
     }
 
     @Override
-    public void moveMarkers() {
+    public void moveCars() {
        // googleMap.clear();
         for (Map.Entry<Marker, LatLng> entry : markers.entrySet()) {
             LatLng latLng = new LatLng(entry.getValue().latitude, entry.getValue().longitude + 0.1);

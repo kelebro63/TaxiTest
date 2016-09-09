@@ -1,6 +1,5 @@
 package com.kelebro63.taxitest.main.map;
 
-import android.location.Address;
 import android.location.Location;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,12 +15,12 @@ import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
+import com.kelebro63.taxitest.providers.cars.IDataAdapter;
+import com.kelebro63.taxitest.providers.cars.MockDataAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -35,39 +34,22 @@ public class MapPresenter extends BasePresenter<IMapView> {
     private LocationSettingsResult lastResult;
     private Subscription subscription;
     private BaseActivity activity;
+    private IDataAdapter dataAdapter;
 
     private final ILocationUtil locationUtil;
 
     private static final String TAG = "Location";
     public static final double AREA_ZOOM_RADIUS = 10000; //in meters
-    public static final int COUNT_MARKERS = 10;
 
     @Inject
     public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity) {
         super(transformer);
         this.locationUtil = locationUtil;
         this.activity = activity;
+        dataAdapter = new MockDataAdapter();
     }
 
     public void setupMapInfo() {
-        List<Address> positions = new ArrayList<>();
-        Address pointA = new Address(Locale.ENGLISH);
-        pointA.setLatitude(55.88548);
-        pointA.setLongitude(33.605);
-        Address pointB =  new Address(Locale.ENGLISH);
-        pointB.setLatitude(56.88548);
-        pointB.setLongitude(38.605);
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        new LatLng(pointA.getLatitude(), pointA.getLongitude());
-        positions.add(pointA);
-        builder.include(new LatLng(pointB.getLatitude(), pointB.getLongitude()));
-        positions.add(pointB);
-
-//        if (pointA == null && pointB != null) {
-//            builder = MapUtils.computeZoomForCenter(pointB.toLatLng(), 200);
-//        }
-       // final LatLngBounds.Builder finalBuilder = builder;
-
         subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
             lastResult = e;
             if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
@@ -80,11 +62,8 @@ public class MapPresenter extends BasePresenter<IMapView> {
             @Override
             public void onNext(@Nullable Location location) {
                 super.onNext(location);
-//                if (location != null) {
-//                    finalBuilder.include(new LatLng(location.getLatitude(), location.getLongitude()));
-//                }
-               //getView().displayMarkers(positions, finalBuilder.build());
-                getView().displayMarkers(positions, toBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS)); //finalBuilder.build();
+                LatLngBounds bounds =  toBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS);
+                getView().displayCars(dataAdapter.getCars(bounds), bounds);
             }
         });
     }
@@ -113,7 +92,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
             public void onNext(Integer o) {
                 super.onNext(o);
                 Log.d(TAG, "onNext = " + o);
-                getView().moveMarkers();
+                getView().moveCars();
             }
 
             @Override
@@ -161,14 +140,4 @@ public class MapPresenter extends BasePresenter<IMapView> {
         });
     }
 
-    public ArrayList<LatLng> generateMarkers(LatLngBounds bounds) {
-        ArrayList<LatLng> latLngs = new ArrayList<>();
-        Random r = new Random();
-        for (int i = 0; i < COUNT_MARKERS; i++) {
-            double lat = bounds.southwest.latitude + (bounds.northeast.latitude - bounds.southwest.latitude) * r.nextDouble();
-            double lon = bounds.southwest.longitude + (bounds.northeast.longitude - bounds.southwest.longitude) * r.nextDouble();
-            latLngs.add(new LatLng(lat, lon));
-        }
-        return latLngs;
-    }
 }
