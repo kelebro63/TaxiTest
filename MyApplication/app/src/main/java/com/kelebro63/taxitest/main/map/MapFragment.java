@@ -190,6 +190,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void displayCars(List<Car> cars, LatLngBounds bounds) {
+        googleMap.clear();
         mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
         for (Car car : cars) {
             markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car.getLatLng());
@@ -198,7 +199,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void moveCars() {
-       // googleMap.clear();
         for (Map.Entry<Marker, LatLng> entry : markers.entrySet()) {
             LatLng latLng = new LatLng(entry.getValue().latitude, entry.getValue().longitude + 0.1);
             entry.setValue(latLng);
