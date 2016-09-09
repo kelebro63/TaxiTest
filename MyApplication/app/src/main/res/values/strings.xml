@@ -6,7 +6,17 @@
     <string name="dialogs.location_cannot_be_determined">Местоположение не определено</string>
     <string name="dialogs_ok">ОК</string>
     <string name="dialogs_exit">Выход</string>
+    <string name="dialogs.error">Ошибка!</string>
+    <string name="dialogs.permissions_error">Отсутствуют необходимые разрешения для определения местоположения</string>
+    <string name="dialogs.go_to_settings">Перейти в настройки</string>
+    <string name="dialogs.enable_location_determining">Разрешить</string>
+    <string name="dialogs.cancel">Отмена</string>
+
+    <string name="api.error.network">Отсуствует подключение к сети!</string>
+    <string name="api.error.server">Произошла ошибка на сервере!</string>
 
     <string name="test">Тест</string>
     <string name="resolvePermissionError">resolvePermissionError</string>
+
+
 </resources>

@@ -13,6 +13,6 @@ import rx.Observable;
 public interface ITaxiAPI {
 
     @GET("/cars")
-    Observable<List<Car>> requestCars();
+    Observable<List<Car>> requestCars(); //LatLngBounds bounds
 
 }

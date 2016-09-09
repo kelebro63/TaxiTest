@@ -23,7 +23,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.kelebro63.taxitest.R;
@@ -32,7 +31,6 @@ import com.kelebro63.taxitest.location.LocationUtil;
 import com.kelebro63.taxitest.main.MainActivity;
 import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
 import com.kelebro63.taxitest.main.map.animation.MarkerAnimation;
-import com.kelebro63.taxitest.models.Car;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,12 +187,13 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     @Override
-    public void displayCars(List<Car> cars, LatLngBounds bounds) {
+    public void displayCars(LatLngBounds bounds) { //List<Car> cars,
         googleMap.clear();
         mapContainer.post(() -> moveCameraToBounds(bounds, googleMap));
-        for (Car car : cars) {
-            markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car.getLatLng());
-        }
+        presenter.getCars(bounds);
+//        for (Car car : cars) {
+//            markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car.getLatLng());
+//        }
     }
 
     @Override

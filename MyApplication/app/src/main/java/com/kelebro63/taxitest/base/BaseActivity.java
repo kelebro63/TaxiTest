@@ -9,6 +9,7 @@ import com.kelebro63.taxitest.App;
 import com.kelebro63.taxitest.di.components.ActivityComponent;
 import com.kelebro63.taxitest.di.components.DaggerActivityComponent;
 import com.kelebro63.taxitest.di.modules.ActivityModule;
+import com.kelebro63.taxitest.error_handler.ErrorDialog;
 import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 
@@ -34,7 +35,7 @@ public abstract class BaseActivity extends RxAppCompatActivity implements IView,
 
     @Override
     public void displayError(String error) {
-
+        ErrorDialog.show(this, error);
     }
 
     @Override

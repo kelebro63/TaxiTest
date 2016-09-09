@@ -11,10 +11,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.SphericalUtil;
+import com.kelebro63.taxitest.api.ITaxiAPI;
 import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
+import com.kelebro63.taxitest.models.Car;
 import com.kelebro63.taxitest.providers.cars.IDataAdapter;
 import com.kelebro63.taxitest.providers.cars.MockDataAdapter;
 
@@ -35,6 +37,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     private Subscription subscription;
     private BaseActivity activity;
     private IDataAdapter dataAdapter;
+    private final ITaxiAPI api;
 
     private final ILocationUtil locationUtil;
 
@@ -42,10 +45,11 @@ public class MapPresenter extends BasePresenter<IMapView> {
     public static final double AREA_ZOOM_RADIUS = 10000; //in meters
 
     @Inject
-    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity) {
+    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity, ITaxiAPI api) {
         super(transformer);
         this.locationUtil = locationUtil;
         this.activity = activity;
+        this.api = api;
         dataAdapter = new MockDataAdapter();
     }
 
@@ -63,7 +67,8 @@ public class MapPresenter extends BasePresenter<IMapView> {
             public void onNext(@Nullable Location location) {
                 super.onNext(location);
                 LatLngBounds bounds =  toBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS);
-                getView().displayCars(dataAdapter.getCars(bounds), bounds);
+                getCars(bounds);
+                getView().displayCars(bounds); //dataAdapter.getCars(bounds),
             }
         });
     }
@@ -138,6 +143,24 @@ public class MapPresenter extends BasePresenter<IMapView> {
                 routing.execute();
             }
         });
+    }
+
+    public void getCars(LatLngBounds bounds) {
+        subscribe(api.requestCars(), getCarsSubscriber()); //bounds
+    }
+
+    private NetworkSubscriber<List<Car>> getCarsSubscriber() {
+        return new NetworkSubscriber<List<Car>>(getView(), this) {
+            @Override
+            public void onNext(List<Car> cars) {
+                super.onNext(cars);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                super.onError(throwable);
+            }
+        };
     }
 
 }
