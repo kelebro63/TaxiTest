@@ -17,8 +17,6 @@ import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
 import com.kelebro63.taxitest.models.Car;
-import com.kelebro63.taxitest.providers.cars.IDataAdapter;
-import com.kelebro63.taxitest.providers.cars.MockDataAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +34,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
     private LocationSettingsResult lastResult;
     private Subscription subscription;
     private BaseActivity activity;
-    private IDataAdapter dataAdapter;
     //private final ITaxiAPI api;
     private final MockRequestCarsITaxiAPI api;
 
@@ -51,8 +48,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
         this.locationUtil = locationUtil;
         this.activity = activity;
         this.api = api;
-        dataAdapter = new MockDataAdapter();
-
     }
 
     public void setupMapInfo() {
