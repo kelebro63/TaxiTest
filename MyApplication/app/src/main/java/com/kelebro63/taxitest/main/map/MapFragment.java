@@ -30,8 +30,6 @@ import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
 import com.kelebro63.taxitest.location.LocationUtil;
 import com.kelebro63.taxitest.main.MainActivity;
-import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
-import com.kelebro63.taxitest.main.map.animation.MarkerAnimation;
 import com.kelebro63.taxitest.models.Car;
 
 import java.util.ArrayList;
@@ -111,7 +109,8 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 return false;
             } else {
                 cleanPolylinesOnMap();
-                presenter.moveMarkers();
+                //presenter.moveMarkers();
+                presenter.getCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
                 return true;
             }
 
@@ -199,12 +198,12 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void moveCars() {
-        for (Map.Entry<Marker, LatLng> entry : markers.entrySet()) {
-            LatLng latLng = new LatLng(entry.getValue().latitude, entry.getValue().longitude + 0.1);
-            entry.setValue(latLng);
-            LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
-            MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
-        }
+//        for (Map.Entry<Marker, LatLng> entry : markers.entrySet()) {
+//            LatLng latLng = new LatLng(entry.getValue().latitude, entry.getValue().longitude + 0.1);
+//            entry.setValue(latLng);
+//            LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
+//            MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
+//        }
     }
 
     @Override
