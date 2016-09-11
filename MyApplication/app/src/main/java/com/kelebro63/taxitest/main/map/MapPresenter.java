@@ -64,8 +64,8 @@ public class MapPresenter extends BasePresenter<IMapView> {
             public void onNext(@Nullable Location location) {
                 super.onNext(location);
                 LatLngBounds bounds =  toBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS);
+                getView().moveCamera(bounds);
                 getCars(bounds);
-                getView().displayCars(bounds); //dataAdapter.getCars(bounds),
             }
         });
     }
@@ -151,6 +151,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
             @Override
             public void onNext(List<Car> cars) {
                 super.onNext(cars);
+                getView().displayCars(cars);
             }
 
             @Override
