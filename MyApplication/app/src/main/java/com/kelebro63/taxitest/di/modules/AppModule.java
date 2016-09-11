@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.kelebro63.taxitest.App;
 import com.kelebro63.taxitest.BuildConfig;
 import com.kelebro63.taxitest.api.ITaxiAPI;
+import com.kelebro63.taxitest.api.MockRequestCarsITaxiAPI;
 import com.kelebro63.taxitest.error_handler.RxErrorHandlingCallAdapterFactory;
 import com.kelebro63.taxitest.location.ILocationUtil;
 import com.kelebro63.taxitest.location.LocationUtil;
@@ -73,6 +74,12 @@ public class AppModule {
         httpClient.interceptors().add(interceptor);
         httpClient.followRedirects(false);
         return httpClient.build();
+    }
+
+    @Singleton
+    @Provides
+    MockRequestCarsITaxiAPI provideMockApi() {
+        return new MockRequestCarsITaxiAPI();
     }
 
     @Singleton

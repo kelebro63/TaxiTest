@@ -1,6 +1,7 @@
 package com.kelebro63.taxitest.di.components;
 
 import com.kelebro63.taxitest.api.ITaxiAPI;
+import com.kelebro63.taxitest.api.MockRequestCarsITaxiAPI;
 import com.kelebro63.taxitest.di.modules.AppModule;
 import com.kelebro63.taxitest.location.ILocationUtil;
 
@@ -15,4 +16,6 @@ public interface AppComponent {
     ILocationUtil locationUtil();
 
     ITaxiAPI api();
+
+    MockRequestCarsITaxiAPI mockApi();
 }

@@ -49,7 +49,7 @@ public class Car implements Serializable {
 
     @Override
     public String toString() {
-        return "Order{" +
+        return "Car{" +
                 "id=" + id +
                 ", lat=" + latitude +
                 ", lon='" + longitude + '\'' +

@@ -35,6 +35,7 @@ public abstract class BasePresenter<T extends IView> {
         original.compose(transformer).subscribeOn(getBackgroundThreadScheduler()).observeOn(getMainThreadScheduler()).subscribe(subscriber);
     }
 
+
     protected <S> Subscription subscribeWithResult(Observable<S> original, NetworkSubscriber<S> subscriber) {
         Subscription subscription = original.compose(transformer).subscribeOn(getBackgroundThreadScheduler()).observeOn(getMainThreadScheduler()).subscribe(subscriber);
         return subscription;
