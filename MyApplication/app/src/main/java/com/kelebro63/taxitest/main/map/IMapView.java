@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface IMapView extends IView, RoutingListener {
     void displayCars(List<Car> cars);
-    void moveCars();
     void setDisplayPermissionError(boolean enabled);
     void moveCamera(LatLngBounds bounds);
 }

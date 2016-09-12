@@ -19,7 +19,6 @@ import com.kelebro63.taxitest.location.ILocationUtil;
 import com.kelebro63.taxitest.models.Car;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -74,39 +73,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
         LatLng southwest = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 225);
         LatLng northeast = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 45);
         return new LatLngBounds(southwest, northeast);
-    }
-
-    public void moveMarkers() {
-        if (subscription != null) {
-            subscription.unsubscribe();
-        }
-        List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
-        subscription = subscribeWithResult(Observable
-                        .interval(1, TimeUnit.SECONDS)
-                        .map(i -> list.get(i.intValue()))
-                        .take(list.size())
-                , getSubscriber());
-    }
-
-    private NetworkSubscriber<Integer> getSubscriber() {
-        return new NetworkSubscriber<Integer>(getView(), this) {
-            @Override
-            public void onNext(Integer o) {
-                super.onNext(o);
-                Log.d(TAG, "onNext = " + o);
-                getView().moveCars();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onCompleted() {
-                super.onCompleted();
-            }
-        };
     }
 
     public void resolvePermissionError() {

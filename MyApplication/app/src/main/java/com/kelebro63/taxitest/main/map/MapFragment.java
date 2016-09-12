@@ -110,7 +110,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 return false;
             } else {
                 cleanPolylinesOnMap();
-                //presenter.moveMarkers();
                 presenter.getMotionCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
                 return true;
             }
@@ -210,16 +209,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     }
 
     @Override
-    public void moveCars() {
-//        for (Map.Entry<Marker, LatLng> entry : markers.entrySet()) {
-//            LatLng latLng = new LatLng(entry.getValue().latitude, entry.getValue().longitude + 0.1);
-//            entry.setValue(latLng);
-//            LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
-//            MarkerAnimation.animateMarkerToGB(entry.getKey(), latLng, mLatLngInterpolator);
-//        }
-    }
-
-    @Override
     public void setDisplayPermissionError(boolean enabled) {
         getActivity().runOnUiThread(() -> permissionErrorView.setVisibility(enabled ? View.VISIBLE : View.GONE));
     }
@@ -256,7 +245,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && permissionsList.contains(Manifest.permission.ACCESS_FINE_LOCATION) && permissionsList.contains(Manifest.permission.ACCESS_COARSE_LOCATION) ) {
             presenter.setupMapInfo();
             cleanPolylinesOnMap();
-            presenter.moveMarkers();
+            presenter.getMotionCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
         } else {
             Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
         }
