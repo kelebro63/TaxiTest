@@ -20,7 +20,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -30,6 +29,8 @@ import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
 import com.kelebro63.taxitest.location.LocationUtil;
 import com.kelebro63.taxitest.main.MainActivity;
+import com.kelebro63.taxitest.main.map.animation.LatLngInterpolator;
+import com.kelebro63.taxitest.main.map.animation.MarkerAnimation;
 import com.kelebro63.taxitest.models.Car;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     View permissionErrorView;
     @Inject
     MapPresenter presenter;
-    private Map<Marker, LatLng> markers = new HashMap<>();
+    private Map<Marker, Car> markers = new HashMap<>();
     private GoogleMap googleMap;
     List<Polyline> polylines = new ArrayList<>();
 
@@ -190,10 +191,22 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void displayCars(List<Car> cars) {
-        googleMap.clear();
-        for (Car car : cars) {
-            markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car.getLatLng());
+       // googleMap.clear();;
+        if (markers.size() == 0) {
+            for (Car car : cars) {
+                markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car);
+            }
+        } else {
+            for (Map.Entry<Marker, Car> entry : markers.entrySet()) { //FIX ME Stream?
+                LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
+                for (Car car : cars) {
+                    if (car.getId() == entry.getValue().getId()) {
+                        MarkerAnimation.animateMarkerToGB(entry.getKey(), car.getLatLng(), mLatLngInterpolator);
+                    }
+                }
+            }
         }
+
     }
 
     @Override
