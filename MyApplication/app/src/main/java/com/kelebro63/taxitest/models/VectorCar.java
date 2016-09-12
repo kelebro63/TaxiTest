@@ -15,8 +15,8 @@ public class VectorCar extends Car{
     private double minValueDirection = -1;
     private double maxValueDirection = 1;
 
-    private double minValueVelocity = 0.01;
-    private double maxValueVelocity = 0.03;
+    private double minValueVelocity = 0.005;
+    private double maxValueVelocity = 0.02;
 
     public VectorCar(int id, double longitude, double latitude) {
         super(id, longitude, latitude);
@@ -24,9 +24,12 @@ public class VectorCar extends Car{
     }
 
     public void createVectorDirection() {
-        vectorDirection = new double[]{
-                minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble(),
-                minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble()
+        double latVectorDirection =  minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
+        double lonVectorDirection = minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
+        double normal = Math.sqrt(Math.pow(latVectorDirection, 2) + Math.pow(lonVectorDirection, 2));
+                vectorDirection = new double[]{
+                        latVectorDirection / normal,
+                        lonVectorDirection / normal
         };
     }
 
