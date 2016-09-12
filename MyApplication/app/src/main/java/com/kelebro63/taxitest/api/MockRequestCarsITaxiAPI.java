@@ -36,6 +36,7 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
 
     private void updateCoordinates() {
         for (VectorCar vectorCar : vectorCars) {
+            vectorCar.createVelocity();
             double[] vectorPath = new double[] {0, 0};
             double newLat, newLon;
             do{
