@@ -146,6 +146,10 @@ public class MapPresenter extends BasePresenter<IMapView> {
         subscribe(api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude), getCarsSubscriber()); //bounds
     }
 
+    public void getMotionCars(LatLngBounds bounds) {
+        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
+    }
+
     private NetworkSubscriber<List<Car>> getCarsSubscriber() {
         return new NetworkSubscriber<List<Car>>(getView(), this) {
             @Override

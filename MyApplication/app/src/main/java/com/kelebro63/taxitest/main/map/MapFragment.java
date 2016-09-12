@@ -110,7 +110,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
             } else {
                 cleanPolylinesOnMap();
                 //presenter.moveMarkers();
-                presenter.getCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
+                presenter.getMotionCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
                 return true;
             }
 

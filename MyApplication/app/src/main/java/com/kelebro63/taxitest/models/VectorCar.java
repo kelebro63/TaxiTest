@@ -15,8 +15,8 @@ public class VectorCar extends Car{
     private double minValueDirection = -1;
     private double maxValueDirection = 1;
 
-    private double minValueVelocity = 0.01;
-    private double maxValueVelocity = 0.1;
+    private double minValueVelocity = 0.001;
+    private double maxValueVelocity = 0.01;
 
     public VectorCar(int id, double longitude, double latitude) {
         super(id, longitude, latitude);
