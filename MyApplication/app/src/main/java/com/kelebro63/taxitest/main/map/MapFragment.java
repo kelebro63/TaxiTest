@@ -53,7 +53,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     View permissionErrorView;
     @Inject
     MapPresenter presenter;
-    private Map<Marker, Car> markers = new HashMap<>();
+    private Map<Integer, Marker> markers = new HashMap<>();
     private GoogleMap googleMap;
     List<Polyline> polylines = new ArrayList<>();
 
@@ -190,19 +190,19 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public void displayCars(List<Car> cars) {
-       // googleMap.clear();;
         if (markers.size() == 0) {
             for (Car car : cars) {
-                markers.put(googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())), car);
+                markers.put(car.getId(), googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())));
             }
         } else {
-            for (Map.Entry<Marker, Car> entry : markers.entrySet()) { //FIX ME Stream?
-                LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
-                for (Car car : cars) {
-                    if (car.getId() == entry.getValue().getId()) {
-                        MarkerAnimation.animateMarkerToGB(entry.getKey(), car.getLatLng(), mLatLngInterpolator);
-                    }
+            LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
+            for (Car car : cars) {
+                if (markers.containsKey(car.getId())) {
+                    MarkerAnimation.animateMarkerToGB(markers.get(car.getId()), car.getLatLng(), mLatLngInterpolator);
+                } else {
+                    markers.put(car.getId(), googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())));
                 }
+
             }
         }
 
