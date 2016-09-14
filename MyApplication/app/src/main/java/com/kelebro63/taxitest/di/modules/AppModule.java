@@ -8,6 +8,7 @@ import com.kelebro63.taxitest.BuildConfig;
 import com.kelebro63.taxitest.api.ITaxiAPI;
 import com.kelebro63.taxitest.api.MockRequestCarsITaxiAPI;
 import com.kelebro63.taxitest.error_handler.RxErrorHandlingCallAdapterFactory;
+import com.kelebro63.taxitest.location.GenymotionLocationUtil;
 import com.kelebro63.taxitest.location.ILocationUtil;
 import com.kelebro63.taxitest.location.LocationUtil;
 import com.kelebro63.taxitest.prefs.IPrefs;
@@ -44,6 +45,8 @@ public class AppModule {
     @Singleton
     @Provides
     ILocationUtil provideLocationUtil() {
+        if (BuildConfig.FLAVOR.equals("genymotion"))
+            return new GenymotionLocationUtil();
         return new LocationUtil(app);
     }
 
