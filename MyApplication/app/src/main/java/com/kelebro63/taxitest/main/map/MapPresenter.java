@@ -62,7 +62,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
                 super.onNext(location);
                 LatLngBounds bounds =  getLatLonBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS);
                 getView().moveCamera(bounds);
-                getCars(bounds);
+                getCars();
             }
         });
     }
@@ -125,8 +125,8 @@ public class MapPresenter extends BasePresenter<IMapView> {
         });
     }
 
-    public void getCars(LatLngBounds bounds) {
-        subscribe(api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude), getCarsSubscriber());
+    public void getCars() {
+        subscribe(getLocation().flatMap(location -> getLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)), getCarsSubscriber());
     }
 
     public void getMotionCars() {
