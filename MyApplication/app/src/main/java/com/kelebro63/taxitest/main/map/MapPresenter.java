@@ -25,13 +25,11 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscription;
 
 
 public class MapPresenter extends BasePresenter<IMapView> {
 
     private LocationSettingsResult lastResult;
-    private Subscription subscription;
     private BaseActivity activity;
     //private final ITaxiAPI api;
     private final MockRequestCarsITaxiAPI api;
@@ -62,18 +60,37 @@ public class MapPresenter extends BasePresenter<IMapView> {
             @Override
             public void onNext(@Nullable Location location) {
                 super.onNext(location);
-                LatLngBounds bounds =  toBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS);
+                LatLngBounds bounds =  getLatLonBounds(new LatLng(location.getLatitude(), location.getLongitude()), AREA_ZOOM_RADIUS);
                 getView().moveCamera(bounds);
                 getCars(bounds);
             }
         });
     }
 
-    private LatLngBounds toBounds(LatLng center, double radius) {
+    private LatLngBounds getLatLonBounds(LatLng center, double radius) {
         LatLng southwest = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 225);
         LatLng northeast = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 45);
         return new LatLngBounds(southwest, northeast);
     }
+
+    private Observable<LatLngBounds> getLatLonBoundsObservable(Location location, double radius) {
+        LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
+        return Observable.just(getLatLonBounds(center, AREA_ZOOM_RADIUS));
+    }
+
+    public Observable<Location> getLocation() {
+        return locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
+            lastResult = e;
+            if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
+                getView().setDisplayPermissionError(false);
+                return locationUtil.requestLocation(activity);
+            }
+            getView().setDisplayPermissionError(true);
+            return Observable.just(null);
+        });
+    }
+
+
 
     public void resolvePermissionError() {
         locationUtil.resolveError(((MapFragment) getView()).getActivity(), lastResult);
@@ -109,11 +126,11 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void getCars(LatLngBounds bounds) {
-        subscribe(api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude), getCarsSubscriber()); //bounds
+        subscribe(api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude), getCarsSubscriber());
     }
 
-    public void getMotionCars(LatLngBounds bounds) {
-        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
+    public void getMotionCars() {
+        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> getLocation()).flatMap(location -> getLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
     }
 
     private NetworkSubscriber<List<Car>> getCarsSubscriber() {

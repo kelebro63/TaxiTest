@@ -110,7 +110,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 return false;
             } else {
                 cleanPolylinesOnMap();
-                presenter.getMotionCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
+                presenter.getMotionCars();
                 return true;
             }
 
@@ -245,7 +245,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && permissionsList.contains(Manifest.permission.ACCESS_FINE_LOCATION) && permissionsList.contains(Manifest.permission.ACCESS_COARSE_LOCATION) ) {
             presenter.setupMapInfo();
             cleanPolylinesOnMap();
-            presenter.getMotionCars(googleMap.getProjection().getVisibleRegion().latLngBounds);
+            presenter.getMotionCars();
         } else {
             Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
         }

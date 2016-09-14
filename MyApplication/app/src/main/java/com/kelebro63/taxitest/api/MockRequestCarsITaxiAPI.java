@@ -58,7 +58,6 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
             vectorCar.setLatitude(newLat);
             vectorCar.setLongitude(newLon);
         }
-
     }
 
     private void createListCars(ArrayList<VectorCar> vectorCars) {
