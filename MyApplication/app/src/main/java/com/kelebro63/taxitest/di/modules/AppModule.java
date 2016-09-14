@@ -79,24 +79,29 @@ public class AppModule {
         return httpClient.build();
     }
 
-    @Singleton
-    @Provides
-    MockRequestCarsITaxiAPI provideMockApi() {
-        return new MockRequestCarsITaxiAPI();
-    }
+//    @Singleton
+//    @Provides
+//    MockRequestCarsITaxiAPI provideMockApi() {
+//        return new MockRequestCarsITaxiAPI();
+//    }
 
     @Singleton
     @Provides
     ITaxiAPI provideAPI(OkHttpClient client, IPrefs prefs) {
-        Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-        Retrofit adapter = new Retrofit.Builder()
-                .client(client)
-                .baseUrl(BuildConfig.API_ENDPOINT)
-                //.setLogLevel(RestAdapter.LogLevel.FULL)
-                .addCallAdapterFactory(RxErrorHandlingCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        return adapter.create(ITaxiAPI.class);
+        if (BuildConfig.FLAVOR.equals("prod")) {
+            Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+            Retrofit adapter = new Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(BuildConfig.API_ENDPOINT)
+                    //.setLogLevel(RestAdapter.LogLevel.FULL)
+                    .addCallAdapterFactory(RxErrorHandlingCallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+            return adapter.create(ITaxiAPI.class);
+        } else {
+            return new MockRequestCarsITaxiAPI();
+        }
+
     }
 
     @Singleton

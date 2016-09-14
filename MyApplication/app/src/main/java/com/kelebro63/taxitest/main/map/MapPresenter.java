@@ -11,7 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.SphericalUtil;
-import com.kelebro63.taxitest.api.MockRequestCarsITaxiAPI;
+import com.kelebro63.taxitest.api.ITaxiAPI;
 import com.kelebro63.taxitest.base.BaseActivity;
 import com.kelebro63.taxitest.base.BasePresenter;
 import com.kelebro63.taxitest.base.NetworkSubscriber;
@@ -31,8 +31,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
 
     private LocationSettingsResult lastResult;
     private BaseActivity activity;
-    //private final ITaxiAPI api;
-    private final MockRequestCarsITaxiAPI api;
+    private final ITaxiAPI api;
 
     private final ILocationUtil locationUtil;
 
@@ -40,7 +39,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     public static final double AREA_ZOOM_RADIUS = 10000; //in meters
 
     @Inject
-    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity, MockRequestCarsITaxiAPI api) {
+    public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity, ITaxiAPI api) {
         super(transformer);
         this.locationUtil = locationUtil;
         this.activity = activity;
