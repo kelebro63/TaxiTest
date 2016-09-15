@@ -2,14 +2,11 @@ package com.kelebro63.taxitest.main.map;
 
 import android.location.Location;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.directions.route.Routing;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.SphericalUtil;
 import com.kelebro63.taxitest.api.ITaxiAPI;
 import com.kelebro63.taxitest.base.BaseActivity;
@@ -18,7 +15,6 @@ import com.kelebro63.taxitest.base.NetworkSubscriber;
 import com.kelebro63.taxitest.location.ILocationUtil;
 import com.kelebro63.taxitest.models.Car;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -29,14 +25,13 @@ import rx.Observable;
 
 public class MapPresenter extends BasePresenter<IMapView> {
 
+    public static final double AREA_ZOOM_RADIUS = 10000; //in meters
+
     private LocationSettingsResult lastResult;
     private BaseActivity activity;
     private final ITaxiAPI api;
-
     private final ILocationUtil locationUtil;
 
-    private static final String TAG = "Location";
-    public static final double AREA_ZOOM_RADIUS = 10000; //in meters
 
     @Inject
     public MapPresenter(Observable.Transformer transformer, ILocationUtil locationUtil, BaseActivity activity, ITaxiAPI api) {
@@ -72,11 +67,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
         return new LatLngBounds(southwest, northeast);
     }
 
-    private Observable<LatLngBounds> requestLatLonBoundsObservable(Location location, double radius) {
-        LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
-        return Observable.just(getLatLonBounds(center, AREA_ZOOM_RADIUS));
-    }
-
     public Observable<Location> requestLocation() {
         return locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
             lastResult = e;
@@ -95,45 +85,34 @@ public class MapPresenter extends BasePresenter<IMapView> {
         locationUtil.resolveError(((MapFragment) getView()).getActivity(), lastResult);
     }
 
-    public void drawRoute(Marker marker) {
-        Log.d(TAG, "subscribe");
-        subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
-            lastResult = e;
-            if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
-                getView().setDisplayPermissionError(false);
-                return locationUtil.requestLocation(activity);
-            }
-            getView().setDisplayPermissionError(true);
-            return Observable.just(null);
-        }), new NetworkSubscriber<Location>(getView(), this) {
-            @Override
-            public void onNext(@Nullable Location location) {
-                super.onNext(location);
-                List<LatLng> wayPoints = new ArrayList<>();
-
-                if (location != null) {
-                    wayPoints.add(new LatLng(location.getLatitude(), location.getLongitude()));
-                }
-
-                wayPoints.add(marker.getPosition());
-                if (wayPoints.size() < 2)
-                    return;
-                Routing routing = new Routing.Builder().waypoints(wayPoints).withListener(getView()).build();
-                routing.execute();
-            }
-        });
-    }
 
     public void getCars() {
-        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> requestLocation()).flatMap(location -> requestLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
+        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> requestLocation()).repeat(), requestLocationSubscriber());
     }
 
-    private NetworkSubscriber<List<Car>> getCarsSubscriber() {
+    private NetworkSubscriber<List<Car>> requestCarsSubscriber() {
         return new NetworkSubscriber<List<Car>>(getView(), this) {
             @Override
             public void onNext(List<Car> cars) {
                 super.onNext(cars);
                 getView().displayCars(cars);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                super.onError(throwable);
+            }
+        };
+    }
+
+    private NetworkSubscriber<Location> requestLocationSubscriber() {
+        return new NetworkSubscriber<Location>(getView(), this) {
+            @Override
+            public void onNext(Location location) {
+                super.onNext(location);
+                LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
+                LatLngBounds bounds = getLatLonBounds(center, AREA_ZOOM_RADIUS);
+                subscribe((api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)), requestCarsSubscriber());
             }
 
             @Override
