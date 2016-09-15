@@ -12,11 +12,13 @@
     <string name="dialogs.enable_location_determining">Разрешить</string>
     <string name="dialogs.cancel">Отмена</string>
 
+    <!--errors-->
     <string name="api.error.network">Отсуствует подключение к сети!</string>
     <string name="api.error.server">Произошла ошибка на сервере!</string>
-
-    <string name="test">Тест</string>
     <string name="resolvePermissionError">resolvePermissionError</string>
 
+    <!--MapFragment-->
+    <string name="test">Тест</string>
+    <string name="map">Map</string>
 
 </resources>

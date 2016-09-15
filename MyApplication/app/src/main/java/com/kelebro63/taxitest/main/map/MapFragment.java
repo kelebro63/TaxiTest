@@ -69,7 +69,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     protected String getTitle() {
-        return "map";//getString(R.string.map);
+        return getString(R.string.map);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.map_menu, menu);
+       // inflater.inflate(R.menu.map_menu, menu);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                 return false;
             } else {
                 cleanPolylinesOnMap();
-                presenter.getMotionCars();
+                presenter.getCars();
                 return true;
             }
 
@@ -248,7 +248,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && permissionsList.contains(Manifest.permission.ACCESS_FINE_LOCATION) && permissionsList.contains(Manifest.permission.ACCESS_COARSE_LOCATION) ) {
             presenter.setupMapInfo();
             cleanPolylinesOnMap();
-            presenter.getMotionCars();
+            presenter.getCars();
         } else {
             Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
         }

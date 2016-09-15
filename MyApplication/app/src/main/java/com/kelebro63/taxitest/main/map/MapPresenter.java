@@ -125,10 +125,6 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void getCars() {
-        subscribe(getLocation().flatMap(location -> getLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)), getCarsSubscriber());
-    }
-
-    public void getMotionCars() {
         subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> getLocation()).flatMap(location -> getLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
     }
 
