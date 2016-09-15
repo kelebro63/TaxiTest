@@ -72,12 +72,12 @@ public class MapPresenter extends BasePresenter<IMapView> {
         return new LatLngBounds(southwest, northeast);
     }
 
-    private Observable<LatLngBounds> getLatLonBoundsObservable(Location location, double radius) {
+    private Observable<LatLngBounds> requestLatLonBoundsObservable(Location location, double radius) {
         LatLng center = new LatLng(location.getLatitude(), location.getLongitude());
         return Observable.just(getLatLonBounds(center, AREA_ZOOM_RADIUS));
     }
 
-    public Observable<Location> getLocation() {
+    public Observable<Location> requestLocation() {
         return locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
             lastResult = e;
             if (e.getStatus().getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
@@ -125,7 +125,7 @@ public class MapPresenter extends BasePresenter<IMapView> {
     }
 
     public void getCars() {
-        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> getLocation()).flatMap(location -> getLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
+        subscribe(Observable.interval(0, 1, TimeUnit.SECONDS).flatMap(n -> requestLocation()).flatMap(location -> requestLatLonBoundsObservable(location, AREA_ZOOM_RADIUS)).flatMap(bounds -> api.requestCars(bounds.southwest.latitude, bounds.southwest.longitude, bounds.northeast.latitude, bounds.northeast.longitude)).repeat(), getCarsSubscriber()); //bounds
     }
 
     private NetworkSubscriber<List<Car>> getCarsSubscriber() {
