@@ -19,7 +19,7 @@ import rx.Observable;
  */
 public class MockRequestCarsITaxiAPI implements ITaxiAPI {
 
-    public static final int COUNT_CARS = 10;
+    public static final int COUNT_CARS = 1;
     private ArrayList<Car> cars;
     private ArrayList<VectorCar> vectorCars;
     private LatLngBounds latLngBounds;
@@ -46,27 +46,19 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
                 vectorCar.setLatLng(newLocation);
             }
             vectorCar.createSpeed();
-            Vector vectorPath = new BasicVector();
             Vector newLocation = new BasicVector();
-            double newLat, newLon;
             do{
                 availableVisibility = true;
                 Vector vectorDirection = vectorCar.getVectorDirection();
-                vectorPath = vectorDirection.multiply(vectorCar.getSpeed());
-//                for (int i = 0; i < vectorDirection.length() ; i++) {
-//                    vectorPath[i] = vectorDirection[i] * vectorCar.getSpeed();
-//                }
-//                newLat = vectorCar.getLatitude() + vectorPath[0];
-//                newLon = vectorCar.getLongitude() + vectorPath[1];
+                Vector vectorPath = vectorDirection.multiply(vectorCar.getSpeed());
                 newLocation = vectorCar.getLocationVector().add(vectorPath);
                 LatLng latLng = new LatLng(newLocation.get(0), newLocation.get(1));
                 if (!latLngBounds.contains(latLng)) { //car out of sight
-                    vectorCar.createVectorDirection();
+                    vectorCar.rotate();
                 } else {
                     availableVisibility = false;
                 }
             } while (availableVisibility);
-
             vectorCar.setLatitude(newLocation.get(0));
             vectorCar.setLongitude(newLocation.get(1));
         }

@@ -1,6 +1,8 @@
 package com.kelebro63.taxitest.models;
 
+import org.la4j.Matrix;
 import org.la4j.Vector;
+import org.la4j.matrix.dense.Basic2DMatrix;
 import org.la4j.vector.dense.BasicVector;
 
 import java.util.Random;
@@ -21,20 +23,13 @@ public class VectorCar extends Car{
     private final double minValueVelocity = 0.005;
     private final double maxValueVelocity = 0.02;
 
+    private final double minAngleValue = 0;
+    private final double maxAngleValue = 360;
+
     public VectorCar(int id, double latitude, double longitude) {
         super(id, latitude, longitude);
         r = new Random();
     }
-
-//    public void createVectorDirection() {
-//        double latVectorDirection =  minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
-//        double lonVectorDirection = minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
-//        double normal = Math.sqrt(Math.pow(latVectorDirection, 2) + Math.pow(lonVectorDirection, 2));
-//                vectorDirection = new double[]{
-//                        latVectorDirection / normal,
-//                        lonVectorDirection / normal
-//        };
-//    }
 
     public void createVectorDirection() {
         double latVectorDirection =  minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
@@ -42,6 +37,14 @@ public class VectorCar extends Car{
         Vector vector = new BasicVector(new double[] {latVectorDirection, lonVectorDirection});
         double norm = vector.euclideanNorm();
         vectorDirection = vector.divide(norm);
+    }
+
+    public void rotate() {
+        double angle =  minAngleValue + (maxAngleValue - minAngleValue) * r.nextDouble();
+        Matrix rotation = new Basic2DMatrix(new double[][] {
+                {Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle))},
+                {-Math.sin(Math.toRadians(angle)), Math.cos(Math.toRadians(angle))}});
+        vectorDirection = rotation.multiply(vectorDirection);
     }
 
     public void createSpeed() {
@@ -59,5 +62,4 @@ public class VectorCar extends Car{
     public Vector getLocationVector() {
         return new BasicVector(new double[] {getLatitude(), getLongitude()});
     }
-
 }
