@@ -1,6 +1,7 @@
 package com.kelebro63.taxitest.models;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.la4j.Vector;
+import org.la4j.vector.dense.BasicVector;
 
 import java.util.Random;
 
@@ -11,8 +12,8 @@ public class VectorCar extends Car{
 
     private Random r;
 
-    private double[] vectorDirection;
-    private double velocity;
+    private Vector vectorDirection;
+    private double speed;
 
     private final double minValueDirection = -1;
     private final double maxValueDirection = 1;
@@ -25,27 +26,38 @@ public class VectorCar extends Car{
         r = new Random();
     }
 
+//    public void createVectorDirection() {
+//        double latVectorDirection =  minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
+//        double lonVectorDirection = minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
+//        double normal = Math.sqrt(Math.pow(latVectorDirection, 2) + Math.pow(lonVectorDirection, 2));
+//                vectorDirection = new double[]{
+//                        latVectorDirection / normal,
+//                        lonVectorDirection / normal
+//        };
+//    }
+
     public void createVectorDirection() {
         double latVectorDirection =  minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
         double lonVectorDirection = minValueDirection + (maxValueDirection - minValueDirection) * r.nextDouble();
-        double normal = Math.sqrt(Math.pow(latVectorDirection, 2) + Math.pow(lonVectorDirection, 2));
-                vectorDirection = new double[]{
-                        latVectorDirection / normal,
-                        lonVectorDirection / normal
-        };
+        Vector vector = new BasicVector(new double[] {latVectorDirection, lonVectorDirection});
+        double norm = vector.euclideanNorm();
+        vectorDirection = vector.divide(norm);
     }
 
-    public void createVelocity() {
-        velocity =   minValueVelocity + (maxValueVelocity - minValueVelocity) * r.nextDouble();
+    public void createSpeed() {
+        speed =  minValueVelocity + (maxValueVelocity - minValueVelocity) * r.nextDouble();
     }
 
-    public double[] getVectorDirection() {
+    public Vector getVectorDirection() {
         return vectorDirection;
     }
 
-    public double getVelocity() {
-        return velocity;
+    public double getSpeed() {
+        return speed;
     }
 
+    public Vector getLocationVector() {
+        return new BasicVector(new double[] {getLatitude(), getLongitude()});
+    }
 
 }

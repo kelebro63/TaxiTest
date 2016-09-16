@@ -5,6 +5,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.kelebro63.taxitest.models.Car;
 import com.kelebro63.taxitest.models.VectorCar;
 
+import org.la4j.Vector;
+import org.la4j.vector.dense.BasicVector;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,19 +45,21 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
                 LatLng newLocation = generateNewLocation(new Random(), latLngBounds);
                 vectorCar.setLatLng(newLocation);
             }
-
-            vectorCar.createVelocity();
-            double[] vectorPath = new double[] {0, 0};
+            vectorCar.createSpeed();
+            Vector vectorPath = new BasicVector();
+            Vector newLocation = new BasicVector();
             double newLat, newLon;
             do{
                 availableVisibility = true;
-                double vectorDirection[] = vectorCar.getVectorDirection();
-                for (int i = 0; i < vectorDirection.length ; i++) {
-                    vectorPath[i] = vectorDirection[i] * vectorCar.getVelocity();
-                }
-                newLat = vectorCar.getLatitude() + vectorPath[0];
-                newLon = vectorCar.getLongitude() + vectorPath[1];
-                LatLng latLng = new LatLng(newLat, newLon);
+                Vector vectorDirection = vectorCar.getVectorDirection();
+                vectorPath = vectorDirection.multiply(vectorCar.getSpeed());
+//                for (int i = 0; i < vectorDirection.length() ; i++) {
+//                    vectorPath[i] = vectorDirection[i] * vectorCar.getSpeed();
+//                }
+//                newLat = vectorCar.getLatitude() + vectorPath[0];
+//                newLon = vectorCar.getLongitude() + vectorPath[1];
+                newLocation = vectorCar.getLocationVector().add(vectorPath);
+                LatLng latLng = new LatLng(newLocation.get(0), newLocation.get(1));
                 if (!latLngBounds.contains(latLng)) { //car out of sight
                     vectorCar.createVectorDirection();
                 } else {
@@ -62,8 +67,8 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
                 }
             } while (availableVisibility);
 
-            vectorCar.setLatitude(newLat);
-            vectorCar.setLongitude(newLon);
+            vectorCar.setLatitude(newLocation.get(0));
+            vectorCar.setLongitude(newLocation.get(1));
         }
     }
 
@@ -82,7 +87,7 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
             LatLng locationCoordinates = generateNewLocation(r, latLngBounds);
             VectorCar car = new VectorCar(i, locationCoordinates.latitude, locationCoordinates.longitude);
             car.createVectorDirection();
-            car.createVelocity();
+            car.createSpeed();
             vectorCars.add(car);
         }
     }
