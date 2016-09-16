@@ -13,7 +13,7 @@ public class Car implements Serializable {
     private double longitude;
     private double latitude;
 
-    public Car(int id, double longitude, double latitude) {
+    public Car(int id, double latitude, double longitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -46,6 +46,11 @@ public class Car implements Serializable {
     public LatLng getLatLng() {
         return new LatLng(latitude, longitude);
     }
+    public void setLatLng(LatLng latLng) {
+        this.latitude = latLng.latitude;
+        this.longitude = latLng.longitude;
+    }
+
 
     @Override
     public String toString() {

@@ -1,5 +1,7 @@
 package com.kelebro63.taxitest.models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Random;
 
 /**
@@ -18,8 +20,8 @@ public class VectorCar extends Car{
     private final double minValueVelocity = 0.005;
     private final double maxValueVelocity = 0.02;
 
-    public VectorCar(int id, double longitude, double latitude) {
-        super(id, longitude, latitude);
+    public VectorCar(int id, double latitude, double longitude) {
+        super(id, latitude, longitude);
         r = new Random();
     }
 
@@ -44,4 +46,6 @@ public class VectorCar extends Car{
     public double getVelocity() {
         return velocity;
     }
+
+
 }

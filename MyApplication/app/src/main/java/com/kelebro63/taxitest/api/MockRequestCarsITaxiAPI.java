@@ -26,7 +26,7 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
     public Observable<List<Car>> requestCars(double southwest_latitude, double southwest_longitude, double northeast_latitude, double northeast_longitude) {
         latLngBounds = new LatLngBounds(new LatLng(southwest_latitude, southwest_longitude), new LatLng(northeast_latitude, northeast_longitude));
         if (vectorCars == null) {
-            createListVectorCars(southwest_latitude, southwest_longitude, northeast_latitude, northeast_longitude);
+            createListVectorCars();
         } else {
             updateCoordinates();
         }
@@ -36,6 +36,13 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
 
     private void updateCoordinates() {
         for (VectorCar vectorCar : vectorCars) {
+
+            //car out of area, need generate new location
+            if (!latLngBounds.contains(vectorCar.getLatLng())) {
+                LatLng newLocation = generateNewLocation(new Random(), latLngBounds);
+                vectorCar.setLatLng(newLocation);
+            }
+
             vectorCar.createVelocity();
             double[] vectorPath = new double[] {0, 0};
             double newLat, newLon;
@@ -63,21 +70,26 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
     private void createListCars(ArrayList<VectorCar> vectorCars) {
         cars = new ArrayList<>();
         for (VectorCar vectorCar : vectorCars) {
-            Car car = new Car(vectorCar.getId(), vectorCar.getLongitude(), vectorCar.getLatitude());
+            Car car = new Car(vectorCar.getId(), vectorCar.getLatitude(), vectorCar.getLongitude());
             cars.add(car);
         }
     }
 
-    private void createListVectorCars(double southwest_latitude, double southwest_longitude, double northeast_latitude, double northeast_longitude) {
+    private void createListVectorCars() {
         Random r = new Random();
         vectorCars = new ArrayList<>();
         for (int i = 0; i < COUNT_CARS; i++) {
-            double lat = southwest_latitude + (northeast_latitude - southwest_latitude) * r.nextDouble();
-            double lon = southwest_longitude + (northeast_longitude - southwest_longitude) * r.nextDouble();
-            VectorCar car = new VectorCar(i, lon, lat);
+            LatLng locationCoordinates = generateNewLocation(r, latLngBounds);
+            VectorCar car = new VectorCar(i, locationCoordinates.latitude, locationCoordinates.longitude);
             car.createVectorDirection();
             car.createVelocity();
             vectorCars.add(car);
         }
+    }
+
+    private LatLng generateNewLocation(Random r, LatLngBounds latLngBounds) {
+        double lat = latLngBounds.southwest.latitude + (latLngBounds.northeast.latitude - latLngBounds.southwest.latitude) * r.nextDouble();
+        double lon = latLngBounds.southwest.longitude + (latLngBounds.northeast.longitude - latLngBounds.southwest.longitude) * r.nextDouble();
+        return new LatLng(lat, lon);
     }
 }
