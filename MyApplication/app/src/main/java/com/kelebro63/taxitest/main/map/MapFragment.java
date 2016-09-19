@@ -3,7 +3,6 @@ package com.kelebro63.taxitest.main.map;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.directions.route.Route;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,7 +22,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.kelebro63.taxitest.R;
 import com.kelebro63.taxitest.base.BaseFragment;
 import com.kelebro63.taxitest.location.LocationUtil;
@@ -79,13 +76,11 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         createFragmentComponent().inject(this);
         setHasOptionsMenu(true);
         presenter.setView(this);
-        initMap();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
@@ -93,7 +88,17 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        initMap();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        markers.clear();
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -110,7 +115,6 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
                         LocationUtil.REQUEST_LOCATION);
                 return false;
             } else {
-                cleanPolylinesOnMap();
                 presenter.getCars();
                 return true;
             }
@@ -149,48 +153,9 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-//        cleanPolylinesOnMap();
-//        presenter.drawRoute(marker);
         marker.showInfoWindow();
         return true;
     }
-
-    private void cleanPolylinesOnMap() {
-        for(Polyline line : polylines) {
-            line.remove();
-        }
-        polylines.clear();
-    }
-
-    @Override
-    public void onRoutingFailure() {
-        setInProgress(false);
-    }
-
-    @Override
-    public void onRoutingStart() {
-        setInProgress(true);
-    }
-
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> routes, int shortestRouteIndex) {
-        setInProgress(false);
-        if (!isAdded() || routes.size() == 0)
-            return;
-        Route route = routes.get(shortestRouteIndex);
-        PolylineOptions polyOptions = new PolylineOptions();
-        polyOptions.color(Color.BLUE);
-        polyOptions.width(getResources().getDimensionPixelSize(R.dimen.polyline_width));
-        polyOptions.addAll(route.getPoints());
-        Polyline polyline = googleMap.addPolyline(polyOptions);
-        polylines.add(polyline);
-    }
-
-    @Override
-    public void onRoutingCancelled() {
-        setInProgress(false);
-    }
-
 
     @Override
     public void displayCars(List<Car> cars) {
@@ -256,9 +221,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         List<String> permissionsList = Arrays.asList(permissions);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && permissionsList.contains(Manifest.permission.ACCESS_FINE_LOCATION) && permissionsList.contains(Manifest.permission.ACCESS_COARSE_LOCATION) ) {
-            presenter.setupMapInfo();
-            cleanPolylinesOnMap();
-            presenter.getCars();
+            Toast.makeText(getActivity(), "Permission Allow!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
         }

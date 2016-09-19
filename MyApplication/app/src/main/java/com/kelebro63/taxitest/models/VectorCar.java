@@ -39,7 +39,9 @@ public class VectorCar extends Car{
         vectorDirection = vector.divide(norm);
     }
 
-    public void rotate() {
+
+    //rotate vector
+    public void rotateVectorDirection() {
         double angle =  minAngleValue + (maxAngleValue - minAngleValue) * r.nextDouble();
         Matrix rotation = new Basic2DMatrix(new double[][] {
                 {Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle))},

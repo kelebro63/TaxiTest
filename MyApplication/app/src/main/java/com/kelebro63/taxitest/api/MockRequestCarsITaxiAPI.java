@@ -19,7 +19,7 @@ import rx.Observable;
  */
 public class MockRequestCarsITaxiAPI implements ITaxiAPI {
 
-    public static final int COUNT_CARS = 1;
+    public static final int COUNT_CARS = 10;
     private ArrayList<Car> cars;
     private ArrayList<VectorCar> vectorCars;
     private LatLngBounds latLngBounds;
@@ -54,7 +54,7 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
                 newLocation = vectorCar.getLocationVector().add(vectorPath);
                 LatLng latLng = new LatLng(newLocation.get(0), newLocation.get(1));
                 if (!latLngBounds.contains(latLng)) { //car out of sight
-                    vectorCar.rotate();
+                    vectorCar.rotateVectorDirection();
                 } else {
                     availableVisibility = false;
                 }
