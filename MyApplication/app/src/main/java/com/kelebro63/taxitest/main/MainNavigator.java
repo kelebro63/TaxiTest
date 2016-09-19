@@ -25,8 +25,7 @@ public class MainNavigator {
         this.activity = activity;
     }
 
-
-
+    //show MapFragment
     public void navigateToMap() {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction().replace(R.id.container, MapFragment.newInstance()).commit();

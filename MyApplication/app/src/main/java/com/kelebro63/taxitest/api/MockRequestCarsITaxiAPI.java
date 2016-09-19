@@ -40,25 +40,30 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
     private void updateCoordinates() {
         for (VectorCar vectorCar : vectorCars) {
 
-            //car out of area, need generate new location
+            //car out of range, need generate new location
             if (!latLngBounds.contains(vectorCar.getLatLng())) {
                 LatLng newLocation = generateNewLocation(new Random(), latLngBounds);
                 vectorCar.setLatLng(newLocation);
             }
-            vectorCar.createSpeed();
+            vectorCar.createSpeed(); //change speed
             Vector newLocation = new BasicVector();
+
             do{
                 availableVisibility = true;
                 Vector vectorDirection = vectorCar.getVectorDirection();
                 Vector vectorPath = vectorDirection.multiply(vectorCar.getSpeed());
                 newLocation = vectorCar.getLocationVector().add(vectorPath);
                 LatLng latLng = new LatLng(newLocation.get(0), newLocation.get(1));
-                if (!latLngBounds.contains(latLng)) { //car out of sight
+
+                //if car out of sight, rotate vectorDirection
+                if (!latLngBounds.contains(latLng)) {
                     vectorCar.rotateVectorDirection();
                 } else {
                     availableVisibility = false;
                 }
+
             } while (availableVisibility);
+
             vectorCar.setLatitude(newLocation.get(0));
             vectorCar.setLongitude(newLocation.get(1));
         }
@@ -84,6 +89,7 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
         }
     }
 
+    //generate new LatLng within this range
     private LatLng generateNewLocation(Random r, LatLngBounds latLngBounds) {
         double lat = latLngBounds.southwest.latitude + (latLngBounds.northeast.latitude - latLngBounds.southwest.latitude) * r.nextDouble();
         double lon = latLngBounds.southwest.longitude + (latLngBounds.northeast.longitude - latLngBounds.southwest.longitude) * r.nextDouble();

@@ -123,6 +123,7 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
         return super.onOptionsItemSelected(item);
     }
 
+    //initialization SupportMapFragment
     private void initMap() {
         SupportMapFragment mapFragment = SupportMapFragment.newInstance();
         getChildFragmentManager().beginTransaction().replace(R.id.mapContainer, mapFragment).commit();

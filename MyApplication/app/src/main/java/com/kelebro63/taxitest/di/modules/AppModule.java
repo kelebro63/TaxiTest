@@ -35,13 +35,11 @@ public class AppModule {
         this.app = app;
     }
 
-//    @Singleton
-//    @Provides
-//    DistanceCounter distanceCounter(ILocationUtil locationUtil) {
-//        return new DistanceCounter(locationUtil);
-//    }
-//
-//
+
+    /*
+     genymotion buildConfig returns GenymotionLocationUtil, in other cases
+     LocationUtil
+     */
     @Singleton
     @Provides
     ILocationUtil provideLocationUtil() {
@@ -79,12 +77,11 @@ public class AppModule {
         return httpClient.build();
     }
 
-//    @Singleton
-//    @Provides
-//    MockRequestCarsITaxiAPI provideMockApi() {
-//        return new MockRequestCarsITaxiAPI();
-//    }
 
+    /*
+     production buildConfig returns ITaxiAPI, in other cases
+     MockRequestCarsITaxiAPI
+     */
     @Singleton
     @Provides
     ITaxiAPI provideAPI(OkHttpClient client, IPrefs prefs) {

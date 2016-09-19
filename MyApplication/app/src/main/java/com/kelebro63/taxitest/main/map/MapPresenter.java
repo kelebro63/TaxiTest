@@ -41,6 +41,8 @@ public class MapPresenter extends BasePresenter<IMapView> {
         this.api = api;
     }
 
+
+    //determines current location, moves camera, get cars
     public void setupMapInfo() {
         subscribe(locationUtil.isRequiredPermissionsEnabled().flatMap(e -> {
             lastResult = e;

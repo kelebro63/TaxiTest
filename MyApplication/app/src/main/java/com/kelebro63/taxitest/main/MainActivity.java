@@ -29,7 +29,6 @@ public class MainActivity  extends BaseToolbarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //getPermission();
     }
 
     @Override

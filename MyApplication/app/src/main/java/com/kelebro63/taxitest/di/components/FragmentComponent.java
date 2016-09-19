@@ -13,5 +13,4 @@ public interface FragmentComponent {
 
     void inject(MapFragment fragment);
 
-
 }
