@@ -39,12 +39,6 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
 
     private void updateCoordinates() {
         for (VectorCar vectorCar : vectorCars) {
-
-            //car out of range, need generate new location
-            if (!latLngBounds.contains(vectorCar.getLatLng())) {
-                LatLng newLocation = generateNewLocation(new Random(), latLngBounds);
-                vectorCar.setLatLng(newLocation);
-            }
             vectorCar.createSpeed(); //change speed
             Vector newLocation = new BasicVector();
 
@@ -57,6 +51,7 @@ public class MockRequestCarsITaxiAPI implements ITaxiAPI {
 
                 //if car out of sight, rotate vectorDirection
                 if (!latLngBounds.contains(latLng)) {
+                    vectorCar.setLatLng(generateNewLocation(new Random(), latLngBounds));
                     vectorCar.rotateVectorDirection();
                 } else {
                     availableVisibility = false;

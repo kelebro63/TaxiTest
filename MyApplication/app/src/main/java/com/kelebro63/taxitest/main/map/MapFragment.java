@@ -33,7 +33,6 @@ import com.kelebro63.taxitest.models.Car;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -161,30 +160,19 @@ public class MapFragment extends BaseFragment implements OnMapReadyCallback, Goo
     @Override
     public void displayCars(List<Car> cars) {
 
-        //remove the marker if it is not in a collection
-        Iterator<Map.Entry<Integer, Marker>> entries = markers.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<Integer, Marker> entry = entries.next();
-            boolean containsElement = false;
-            for (Car car : cars) {
-                if (entry.getKey() == car.getId()) {
-                    containsElement = true;
-                }
-            }
-            if (!containsElement) {
-                markers.remove(entry.getKey());
-            }
-        }
-
         //update and create markers
+        Map<Integer, Marker> selectMarkers = new HashMap<>();
         LatLngInterpolator mLatLngInterpolator = new LatLngInterpolator.Linear();
         for (Car car : cars) {
             if (markers.containsKey(car.getId())) {
+                selectMarkers.put(car.getId(), markers.get(car.getId()));
                 MarkerAnimation.animateMarkerToGB(markers.get(car.getId()), car.getLatLng(), mLatLngInterpolator);
             } else {
-                markers.put(car.getId(), googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())));
+                selectMarkers.put(car.getId(), googleMap.addMarker(new MarkerOptions().position(car.getLatLng()).title(car.toString())));
             }
         }
+        markers.clear();
+        markers.putAll(selectMarkers);
     }
 
     @Override
